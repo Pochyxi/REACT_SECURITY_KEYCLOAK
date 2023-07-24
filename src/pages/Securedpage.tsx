@@ -1,33 +1,52 @@
-import {useEffect} from 'react';
-import useAuth from "../hooks/useAuth.tsx";
+import {useEffect, useState} from 'react';
+// import useAuth from "../hooks/useAuth.tsx";
 import axios from "axios";
+import {useSelector} from "react-redux";
+import {RootState} from "../redux/store/store.ts";
 
 
-const Secured = () => {
-    const { isLogin, logout } = useAuth();
+const  Secured = () => {
+    // const { logout } = useAuth();
+
+    const user = useSelector((state: RootState) => state.STORE1.user);
+
+    const [accountsExists, setAccountsExists] = useState(false);
 
     useEffect(() => {
-        const token = window.sessionStorage.getItem('token');
-        if (token) {
-            const email = JSON.parse(window.sessionStorage.getItem('profile') || '').email;
+
+        if (user.token) {
+
             axios({
                 method: 'get',
-                url: `http://localhost:8080/myCards?email=${email}`,
+                url: `http://localhost:8080/myAccount?email=${user.email}`,
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${user.token}`
                 }
             })
                 .then(function (response) {
-                    console.log(response);
+                    if (response) {
+                        setAccountsExists(true)
+                        console.log(response);
+                    } else {
+                        setAccountsExists(false)
+                    }
+
                 });
         }
-    }, [isLogin]);
+    }, [user.email, user.token]);
 
     return (
-        <div>
-            <h1 className="text-black text-4xl">Welcome to the Protected Page.</h1>
-            <button onClick={logout}>Logout</button>
-        </div>
+            accountsExists ? (
+                <div>
+                    <h1 className="text-black text-4xl">Welcome to the Protected Page.</h1>
+                    {/*<button onClick={logout}>Logout</button>*/}
+                </div>
+            ) : (
+                <>
+                    <div className="text-center">Nessun account disponibile</div>
+                    {/*<button onClick={logout}>Logout</button>*/}
+                </>
+            )
     );
 };
 
