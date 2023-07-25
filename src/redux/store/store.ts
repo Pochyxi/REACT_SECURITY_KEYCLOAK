@@ -4,10 +4,12 @@ import storage from "redux-persist/lib/storage";
 import { encryptTransform } from "redux-persist-transform-encrypt";
 import userReducer from "../reducers/userReducer.ts";
 import {User} from "../../interfaces/User.ts";
+import {UserDetails} from "../../interfaces/UserDetails.ts";
 
 
 interface Store1State {
     user: User
+    userDetails: UserDetails
 }
 
 export interface RootState {

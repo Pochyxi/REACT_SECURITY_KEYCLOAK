@@ -1,19 +1,22 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import SecuredPage from "./pages/Securedpage";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import SecuredPage from "./pages/SecuredPage/Securedpage.tsx";
 import NavbarMUI from "./components/Nav/NavbarMUI.tsx";
-import Homepage from "./pages/Homepage";
+import Homepage from "./pages/HomePage/Homepage.tsx";
+
 
 function App() {
+
+
     return (
-        <div className="App">
-            <BrowserRouter>
-                <NavbarMUI />
+        <BrowserRouter>
+            <div className="App">
+                <NavbarMUI/>
                 <Routes>
-                    <Route path="/" element={<Homepage />} />
-                    <Route path="/login" element={<SecuredPage />} />
+                    <Route path="/" element={<Homepage/>}/>
+                    <Route path="/secured_page" element={<SecuredPage/>}/>
                 </Routes>
-            </BrowserRouter>
-        </div>
+            </div>
+        </BrowserRouter>
     );
 }
 

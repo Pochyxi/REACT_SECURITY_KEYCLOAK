@@ -14,9 +14,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {useNavigate} from "react-router-dom";
-import {useSelector} from "react-redux";
 import {RootState} from "../../redux/store/store.ts";
 import {useEffect} from "react";
+import {useSelector} from "react-redux";
 import useAuth from "../../hooks/useAuth.tsx";
 
 
@@ -25,7 +25,7 @@ interface Props {
      * Injected by the documentation to work in an iframe.
      * You won't need it on your project.
      */
-    window?: () => Window;
+    window?: () => Window,
 }
 
 const drawerWidth = 240;
@@ -33,39 +33,48 @@ const drawerWidth = 240;
 function NavbarMUI(props: Props) {
     const {window} = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const {logout} = useAuth();
     const navigate = useNavigate();
-    const { logout } = useAuth();
     const user = useSelector((state: RootState) => state.STORE1.user);
     const [navItems, setNavItems] = React.useState<string[]>(['Home', 'About', 'Contact', 'login', 'logout']);
 
     useEffect(() => {
+
         if (user.token) {
             setNavItems(['Home', 'About', 'Contact', 'logout']);
         } else {
-            setNavItems(['Home', 'About', 'Contact', 'login']);
+            setNavItems(['Home', 'About', 'Contact'])
         }
     }, [user.token]);
 
     const customNavigation = (path: string) => {
+
         switch (path) {
+            case 'login':
+                break;
+
+            case 'logout':
+                logout();
+                break;
+
+
             case 'Home':
                 navigate('/');
                 break;
+
             case 'About':
                 navigate('/about');
                 break;
+
             case 'Contact':
                 navigate('/contact');
                 break;
-            case 'login':
-                navigate('/login');
-                break;
-            case 'logout':
-                logout();
-                navigate('/logout');
-                break;
+
+
+
             default:
                 navigate('/');
+                break;
         }
     }
 

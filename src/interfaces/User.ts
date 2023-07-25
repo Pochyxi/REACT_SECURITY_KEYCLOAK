@@ -3,5 +3,5 @@ export interface User {
     firstName: string | undefined;
     lastName: string | undefined;
     token: string | undefined;
-    xrsfToken: string | undefined;
+    xsrfToken: string | undefined;
 }

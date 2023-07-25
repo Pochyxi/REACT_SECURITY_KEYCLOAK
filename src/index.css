@@ -1,2 +1,17 @@
+body {
+    --background-main: #121212;
+    --background-secondary: #1E1E1E;
+    --background-alert: #B00020;
+    --text-main: #FFFFFF;
+    --text-secondary: #A1A1A1;
+    --text-alert: #FFFFFF;
+    --background-input: #2D2D2D;
+    --text-input: #FFFFFF;
+    --background-hover: #353535;
+    --background-active: #424242;
+    --highlight: #BB86FC;
 
+    background-color: var(--background-main)!important;
+    color: var(--text-main)!important;
+}
 

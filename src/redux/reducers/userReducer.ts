@@ -1,11 +1,14 @@
 import {User} from "../../interfaces/User.ts";
 import {SET_USER} from "../actions/UserActions.ts";
+import {UserDetails} from "../../interfaces/UserDetails.ts";
 
 type ActionType =
     | { type: 'SET_USER', payload: User }
+    | { type: 'SET_USER_DETAILS', payload: UserDetails }
 
 export interface UserState {
-    user: User
+    user: User,
+    userDetails: UserDetails
 }
 
 const initialState = {
@@ -14,7 +17,14 @@ const initialState = {
         firstName: "",
         lastName: "",
         token: "",
-        xrsfToken: ""
+        xsrfToken: ""
+    },
+    userDetails: {
+        accountEmail: "",
+        firstName: "",
+        lastName: "",
+        telephoneNumber: "",
+        createDt: ""
     }
 }
 
@@ -26,6 +36,11 @@ const userReducer = (state: UserState = initialState, action: ActionType) => {
                 ...state,
                 user: action.payload,
             };
+        case 'SET_USER_DETAILS':
+            return {
+                ...state,
+                userDetails: action.payload,
+            }
         default:
             return state;
     }
