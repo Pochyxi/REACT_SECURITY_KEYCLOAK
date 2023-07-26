@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:8080";
-const accountDetailsPath = "/myAccount";
+export const baseUrl = "http://localhost:8080";
+export const accountDetailsPath = "/myAccount";
 
 
 export const getUserDetails = ( email:string | undefined, token:string ) => {

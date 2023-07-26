@@ -1,8 +1,8 @@
 body {
-    --background-main: #121212;
+    --background-main: #283b48;
     --background-secondary: #1E1E1E;
     --background-alert: #B00020;
-    --text-main: #FFFFFF;
+    --text-main: rgba(255, 255, 255, 0.84);
     --text-secondary: #A1A1A1;
     --text-alert: #FFFFFF;
     --background-input: #2D2D2D;

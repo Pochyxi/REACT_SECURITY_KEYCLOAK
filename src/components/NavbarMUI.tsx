@@ -14,11 +14,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {useNavigate} from "react-router-dom";
-import {RootState} from "../../redux/store/store.ts";
+import {RootState} from "../redux/store/store.ts";
 import {useEffect} from "react";
-import {useSelector} from "react-redux";
-import useAuth from "../../hooks/useAuth.tsx";
-
+import {useDispatch, useSelector} from "react-redux";
+import {useKeycloak} from "@react-keycloak/web";
+import {setUser} from "../redux/actions/UserActions.ts";
+import jwtDecode from 'jwt-decode';
 
 interface Props {
     /**
@@ -33,28 +34,53 @@ const drawerWidth = 240;
 function NavbarMUI(props: Props) {
     const {window} = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const {logout} = useAuth();
+    const {keycloak} = useKeycloak();
+
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.STORE1.user);
     const [navItems, setNavItems] = React.useState<string[]>(['Home', 'About', 'Contact', 'login', 'logout']);
+    const dispatch = useDispatch();
 
     useEffect(() => {
 
-        if (user.token) {
-            setNavItems(['Home', 'About', 'Contact', 'logout']);
+        if (keycloak.authenticated) {
+            setNavItems(['Home', 'Profilo', 'Logout']);
+            keycloak.loadUserProfile()
+                .then((profile) => {
+                    dispatch(setUser({
+                        email: profile.email,
+                        firstName: profile.firstName,
+                        lastName: profile.lastName,
+                        token: keycloak.token as string,
+                        xsrfToken: ""
+                    }));
+                    // console.log(keycloak.tokenParsed)
+                    const token = keycloak.token as string;
+                    const decodedToken = jwtDecode(token);
+                    console.log(decodedToken)
+                });
         } else {
-            setNavItems(['Home', 'About', 'Contact'])
+            setNavItems(['Home', 'About', 'Contact', 'Login'])
+            dispatch(setUser({
+                email: "Forestiero",
+                firstName: "",
+                lastName: "",
+                token: "",
+                xsrfToken: ""
+            }))
         }
-    }, [user.token]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [keycloak.authenticated]);
 
     const customNavigation = (path: string) => {
 
         switch (path) {
-            case 'login':
+            case 'Login':
+                keycloak.login()
                 break;
 
-            case 'logout':
-                logout();
+            case 'Logout':
+                keycloak.logout();
                 break;
 
 
@@ -62,14 +88,13 @@ function NavbarMUI(props: Props) {
                 navigate('/');
                 break;
 
-            case 'About':
-                navigate('/about');
+            case 'Profilo':
+                navigate('/secured_page');
                 break;
 
             case 'Contact':
                 navigate('/contact');
                 break;
-
 
 
             default:
@@ -85,7 +110,7 @@ function NavbarMUI(props: Props) {
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{textAlign: 'center'}}>
             <Typography variant="h6" sx={{my: 2}}>
-                APP
+                {user.firstName} {user.lastName}
             </Typography>
             <Divider/>
             <List>
@@ -127,7 +152,7 @@ function NavbarMUI(props: Props) {
                         component="div"
                         sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
                     >
-                        APP
+                        {user.email}
                     </Typography>
                     <Box sx={{display: {xs: 'none', sm: 'block'}}}>
                         {navItems.map((item) => (
