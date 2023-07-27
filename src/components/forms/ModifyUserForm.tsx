@@ -7,29 +7,21 @@ import {useDispatch, useSelector} from "react-redux";
 import {setUserDetails} from "../../redux/actions/UserActions.ts";
 import LoadingButton from '@mui/lab/LoadingButton';
 import StandardButtonTheme from "../../themes/StandardButtonTheme.ts";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {ThemeProvider} from "@mui/material/styles";
 import SaveIcon from '@mui/icons-material/Save';
 import {CircularProgress, TextField} from "@mui/material";
 import {Col, Row} from "react-bootstrap";
 import TextFieldTheme from "../../themes/TextFieldTheme.ts";
+import CircularWhite from "../../themes/CircularWhite.ts";
 
 
 interface ModifyUserFormProps {
-    accountEmail: string | undefined
-    firstName: string | undefined
-    lastName: string | undefined
-    telephoneNumber: string | undefined
+    accountEmail: string | ""
+    firstName: string | ""
+    lastName: string | ""
+    telephoneNumber: string | ""
     setFormFlag: (flag: boolean) => void
 }
-
-
-const circulaWhite = createTheme({
-    palette: {
-        secondary: {
-            main: '#ffffff',
-        },
-    },
-});
 
 
 const ModifyUserForm: FC<ModifyUserFormProps> = (props: ModifyUserFormProps) => {
@@ -39,8 +31,8 @@ const ModifyUserForm: FC<ModifyUserFormProps> = (props: ModifyUserFormProps) => 
 
     const modify = (values: UserDetails) => {
         fetchModifyUserDetails(baseUrl + modifyAccountDetailsPath, values, user.token, user.xsrfToken).then((response) => {
-            dispatch(setUserDetails(response.data))
             props.setFormFlag(false)
+            dispatch(setUserDetails(response.data.body))
         })
     }
 
@@ -53,9 +45,9 @@ const ModifyUserForm: FC<ModifyUserFormProps> = (props: ModifyUserFormProps) => 
             }}
             validate={values => {
                 const errors: {
-                    firstName?: string
-                    lastName?: string
-                    telephoneNumber?: string
+                    firstName?: string | ""
+                    lastName?: string | ""
+                    telephoneNumber?: string | ""
                 } = {}
 
                 if (!values.firstName) {
@@ -147,7 +139,7 @@ const ModifyUserForm: FC<ModifyUserFormProps> = (props: ModifyUserFormProps) => 
                                     variant="contained"
                                     color="softBlack"
                                     loadingIndicator={
-                                        <ThemeProvider theme={circulaWhite}>
+                                        <ThemeProvider theme={CircularWhite}>
                                             <CircularProgress color="secondary" size={24} />
                                         </ThemeProvider>
                                     }

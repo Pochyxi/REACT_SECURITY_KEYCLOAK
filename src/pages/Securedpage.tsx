@@ -39,7 +39,10 @@ const Secured = () => {
                         xsrfToken: response.headers['x-xsrf-token']
                     }))
                     console.log(response.data.body);
-                    dispatch(setUserDetails(response.data.body))
+                    dispatch(setUserDetails({
+                        ...response.data.body,
+                        telephoneNumber: response.data.body.telephoneNumber ? response.data.body.telephoneNumber : ""
+                    }))
                 } else {
                     // Se la risposta non esiste, settiamo accountsExists a false
                     setAccountsExists(false)

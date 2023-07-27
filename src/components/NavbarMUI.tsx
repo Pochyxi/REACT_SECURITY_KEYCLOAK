@@ -96,7 +96,7 @@ function NavbarMUI(props: Props) {
         } else {
             setNavItems(['Home', 'About', 'Contact', 'Login'])
             dispatch(setUser({
-                email: "Forestiero",
+                email: "",
                 firstName: "",
                 lastName: "",
                 token: "",

@@ -5,6 +5,8 @@ export const baseUrl = "http://localhost:8080";
 export const accountDetailsPath = "/myAccount";
 export const modifyAccountDetailsPath = "/updateAccount";
 
+export const fetchDeleteUserDetails = "/deleteAccount";
+
 
 export const getUserDetails = ( email:string | undefined, token:string | undefined ) => {
     return axios({
@@ -30,3 +32,4 @@ export const fetchModifyUserDetails = ( url:string | undefined, data: UserDetail
     })
 
 }
+
