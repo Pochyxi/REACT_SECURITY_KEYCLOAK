@@ -13,7 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {RootState} from "../redux/store/store.ts";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -37,10 +37,44 @@ function NavbarMUI(props: Props) {
     const {keycloak} = useKeycloak();
 
     const navigate = useNavigate();
+    const location = useLocation();
     const user = useSelector((state: RootState) => state.STORE1.user);
     const [navItems, setNavItems] = React.useState<string[]>(['Home', 'About', 'Contact', 'login', 'logout']);
     const dispatch = useDispatch();
 
+    // Imposta un timeout per verificare la scadenza del token
+    useEffect(() => {
+        const minValidity = 30; // Secondi
+        const refreshInterval = setInterval(() => {
+            keycloak.updateToken(minValidity)
+                .then(refreshed => {
+                    if (refreshed) {
+                        // Il token è stato rinnovato
+                        dispatch(setUser({
+                            ...user,
+                            token: keycloak.token as string,
+                        }));
+                        console.log("Token refreshed")
+                    } else {
+                        // Il token era ancora valido, non era necessario rinnovare
+                        console.log("Token not refreshed, still valid")
+                    }
+                })
+                .catch(() => {
+                    // Errore durante il tentativo di rinnovo del token, potrebbe essere necessario gestire il logout qui
+                    keycloak.logout();
+                    console.log("Failed to refresh the token, or the session has expired")
+                });
+        }, 10000); // Controlla ogni 10 secondi
+
+        return () => clearInterval(refreshInterval); // Pulisce l'intervallo quando il componente viene smontato
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [keycloak]); // Dipendenza da keycloak
+
+
+    // Imposta i link del menu in base allo stato di autenticazione
+    // Imposta anche l'oggetto user nello store
     useEffect(() => {
 
         if (keycloak.authenticated) {
@@ -103,6 +137,17 @@ function NavbarMUI(props: Props) {
         }
     }
 
+    const locationConverter = (item:string) => {
+        switch (item) {
+            case 'Home':
+                return '/';
+            case 'Profilo':
+                return '/secured_page';
+        }
+    }
+
+    console.log(location.pathname)
+
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
     };
@@ -120,8 +165,10 @@ function NavbarMUI(props: Props) {
                         disablePadding>
                         <ListItemButton
                             sx={{
-                                textAlign: 'center'
+                                textAlign: 'center',
+                                color: location.pathname === locationConverter(item) ? '#fff' : 'var(--highlight)',
                             }}
+                            color={location.pathname === locationConverter(item) ? 'primary' : 'inherit'}
                             onClick={() => customNavigation(item)}>
                             <ListItemText primary={item}/>
                         </ListItemButton>
@@ -156,7 +203,7 @@ function NavbarMUI(props: Props) {
                     </Typography>
                     <Box sx={{display: {xs: 'none', sm: 'block'}}}>
                         {navItems.map((item) => (
-                            <Button key={item} sx={{color: '#fff'}} onClick={() => customNavigation(item)}>
+                            <Button key={item} sx={{color: location.pathname != locationConverter(item) ? '#fff' : 'var(--highlight)',}} onClick={() => customNavigation(item)}>
                                 {item}
                             </Button>
                         ))}

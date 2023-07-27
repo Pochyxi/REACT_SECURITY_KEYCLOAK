@@ -1,131 +1,107 @@
 import {Card, CardContent} from "@mui/material";
-
 import {useSelector} from "react-redux";
 import {RootState} from "../redux/store/store.ts";
 import {Col, Row} from "react-bootstrap";
-import {Formik} from "formik";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import {useState} from "react";
+import {ThemeProvider} from '@mui/material/styles';
+import StandardButtonTheme from "../themes/StandardButtonTheme.ts";
+import ModifyUserForm from "./forms/ModifyUserForm.tsx";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import CloseIcon from '@mui/icons-material/Close';
+import CardTheme from "../themes/CardTheme.ts";
 
-const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
-    },
-});
+
+// Augment the palette to include a violet color
+declare module '@mui/material/styles' {
+    interface Palette {
+        violet: Palette['primary'];
+    }
+
+    interface PaletteOptions {
+        violet?: PaletteOptions['primary'];
+    }
+}
+
+// Update the Button's color options to include a violet option
+declare module '@mui/material/Button' {
+    interface ButtonPropsColorOverrides {
+        violet: true;
+    }
+}
 
 
 const UserDetailsCard = () => {
 
-    const user = useSelector((state: RootState) => state.STORE1.user);
     const userDetails = useSelector((state: RootState) => state.STORE1.userDetails);
+    const [modifyUser, setModifyUser] = useState<boolean>(false);
+    const colInfoStyle = {
+        color: 'var(--background-primary)',
+        fontWeight: 'bold',
+        backgroundColor: 'var(--background-main)',
+        marginBottom: '15px',
+        padding: '10px',
+    }
 
 
     return (
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={CardTheme}>
             <Card>
                 <CardContent>
-                    <Row className={'text-center'}>
-                        <Col>
-                            <p className={'h4'}>{user.firstName} {user.lastName}</p>
+                    <Row>
+                        <Col className={'d-flex justify-content-start'}>
+                            <ThemeProvider theme={StandardButtonTheme}>
+                                <Button variant="contained" color={'softBlack'} startIcon={
+                                    modifyUser ? <CloseIcon/> :
+                                    <ManageAccountsIcon/>
+                                }
+                                        onClick={() => setModifyUser(!modifyUser)}
+                                >
+                                    { modifyUser ? 'Annulla' : 'Modifica' }
+                                </Button>
+                            </ThemeProvider>
                         </Col>
                     </Row>
-                    <Row className={'flex-column'}>
-                        <Col>
-                            <p className={'h6'}>Email: {user.email}</p>
-                        </Col>
-                        <Col>
-                            <p className={'h6'}>Data iscrizione: {userDetails?.createDt}</p>
-                        </Col>
-                        <Col>
-                            <p className={'h6'}>Telefono: {userDetails.telephoneNumber}</p>
-                        </Col>
-                        <Formik
-                            initialValues={{
-                                "accountEmail": "",
-                                "firstName": "",
-                                "lastName": "",
-                                "telephoneNumber": ""
-                        }}
-                            validate={values => {
-                                const errors: {
-                                    accountEmail?: string
-                                    firstName?: string
-                                    lastName?: string
-                                    telephoneNumber?: string
-                                } = {}
+                    <Row className={'flex-column my-2'}>
+                    {
+                        !modifyUser ?
+                            <>
+                                <Col style={{color: 'var(--highlight)'}}>Nome</Col>
+                                <Col style={colInfoStyle}>
+                                    <p className={'h5 m-0'}>{userDetails.firstName}</p>
+                                </Col>
 
-                                if (!values.accountEmail) {
-                                    errors.accountEmail = 'Required';
-                                }
-                                if (!values.firstName) {
-                                    errors.firstName = 'Required';
-                                }
-                                if (!values.lastName) {
-                                    errors.lastName = 'Required';
-                                }
-                                if (!values.telephoneNumber) {
-                                    errors.telephoneNumber = 'Required';
-                                }
+                                <Col style={{color: 'var(--highlight)'}}>Cognome</Col>
+                                <Col style={colInfoStyle}>
+                                    <p className={'h5 m-0'}>{userDetails.lastName}</p>
+                                </Col>
 
-                                return errors;
-                            }}
-                            onSubmit={
-                                (values, {setSubmitting}) => {
-                                    setTimeout(() => {
-                                        alert(JSON.stringify(values, null, 2));
-                                        setSubmitting(false);
-                                    }, 400);
-                                }}
-                        >
-                            {({
-                                  values,
-                                  errors,
-                                  touched,
-                                  handleChange,
-                                  handleBlur,
-                                  handleSubmit,
-                                  isSubmitting,
-                                  /* and other goodies */
-                              }) => (
-                                <form onSubmit={handleSubmit}>
-                                    <input
-                                        type="text"
-                                        name="accountEmail"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.accountEmail}
-                                    />
-                                    {errors.accountEmail && touched.accountEmail && errors.accountEmail}
-                                    <input
-                                        type="text"
-                                        name="firstName"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.firstName}
-                                    />
-                                    {errors.firstName && touched.firstName && errors.firstName}
-                                    <input
-                                        type="text"
-                                        name="lastName"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.lastName}
-                                    />
-                                    {errors.lastName && touched.lastName && errors.lastName}
-                                    <input
-                                        type="text"
-                                        name="telephoneNumber"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.telephoneNumber}
-                                    />
-                                    {errors.telephoneNumber && touched.telephoneNumber && errors.telephoneNumber}
-                                    <button type="submit" disabled={isSubmitting}>
-                                        Submit
-                                    </button>
-                                </form>
-                            )}
-                        </Formik>
+                                <Col style={{color: 'var(--highlight)'}}>Email: </Col>
+                                <Col style={colInfoStyle}>
+                                    <p className={'h6 m-0'}>{userDetails.accountEmail}</p>
+                                </Col>
 
+                                <Col style={{color: 'var(--highlight)'}}>Data iscrizione</Col>
+                                <Col style={colInfoStyle}>
+                                    <p className={'h6 m-0'}>{userDetails?.createDt}</p>
+                                </Col>
+
+                                <Col style={{color: 'var(--highlight)'}}>Telefono</Col>
+                                <Col style={colInfoStyle}>
+                                    <p className={'h6 m-0'}>{userDetails.telephoneNumber}</p>
+                                </Col>
+                                <Col>
+
+                                </Col>
+                            </>
+                         : <ModifyUserForm
+                            accountEmail={userDetails.accountEmail}
+                            telephoneNumber={userDetails.telephoneNumber}
+                            firstName={userDetails.firstName}
+                            lastName={userDetails.lastName}
+                            setFormFlag={setModifyUser}
+                        />
+                    }
                     </Row>
                 </CardContent>
             </Card>

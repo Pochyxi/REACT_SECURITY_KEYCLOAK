@@ -1,11 +1,10 @@
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../redux/store/store.ts";
-import {setUser, setUserDetails} from "../../redux/actions/UserActions.ts";
-import {accountDetailsPath, baseUrl, getUserDetails} from "../../api/userApi.ts";
+import {RootState} from "../redux/store/store.ts";
+import {setUser, setUserDetails} from "../redux/actions/UserActions.ts";
+import {getUserDetails} from "../api/userApi.ts";
 import {Col, Container, Row} from "react-bootstrap";
-import UserDetailsCard from "../../components/UserDetailsCard.tsx";
-import axios from "axios";
+import UserDetailsCard from "../components/UserDetailsCard.tsx";
 
 
 const Secured = () => {
@@ -23,17 +22,13 @@ const Secured = () => {
     // useEffect ci permette di eseguire codice al cambio di alcune dipendenze, in questo caso `user.token`
     useEffect(() => {
 
-        const axiosData = async () => {
+        // Funzione asincrona per fare la fetch dei dati dell'utente
+        const fetchData = async () => {
             // Se non c'è un token, non facciamo il fetch dei dati
             if (!user.token) return;
 
-            axios({
-                method: 'get',
-                url: `${baseUrl}${accountDetailsPath}?email=${user.email}`,
-                headers: {
-                    'Authorization': 'Bearer ' + user.token,
-                }
-            }).then(function (response) {
+            // Chiamiamo la nostra API per ottenere i dettagli dell'utente
+            getUserDetails(user.email, user.token).then(function (response) {
                 if (response) {
                     // Se la risposta esiste, settiamo accountsExists a true
                     setAccountsExists(true)
@@ -54,22 +49,11 @@ const Secured = () => {
                 setAccountsExists(false)
                 console.log(error);
             });
-        }
-
-
-        // Funzione asincrona per fare la fetch dei dati dell'utente
-        const fetchData = async () => {
-            // Se non c'è un token, non facciamo il fetch dei dati
-            if (!user.token) return;
-
-            // Chiamiamo la nostra API per ottenere i dettagli dell'utente
-            getUserDetails(user.email, user.token)
 
         };
 
         // Eseguiamo la nostra funzione per fare il fetch dei dati
         fetchData().then(r => r);
-        axiosData().then(r => r);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.token]);

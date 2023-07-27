@@ -13,13 +13,15 @@ const PrivateRoute: FC<PrivateRouteProps> = ({children}) => {
 
     const isLoggedIn = keycloak.authenticated;
 
-    return isLoggedIn ? children : <Alert
+    return isLoggedIn ?
+        children :
+        <Alert
         className={'text-center'}
         style={{
             backgroundColor: 'var(--background-alert)',
             color: 'var(--text-alert)',
         }}>
-        Non sei autorizzato ad accedere a questa pagina
+        Non sei autorizzato ad accedere a questa pagina, effettua il login
     </Alert>
 };
 
