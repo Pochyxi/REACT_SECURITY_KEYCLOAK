@@ -1,5 +1,5 @@
 import {User} from "../../interfaces/User.ts";
-import {SET_USER} from "../actions/UserActions.ts";
+import {SET_USER, SET_USER_DETAILS} from "../actions/userActions.ts";
 import {UserDetails} from "../../interfaces/UserDetails.ts";
 
 type ActionType =
@@ -36,7 +36,7 @@ const userReducer = (state: UserState = initialState, action: ActionType) => {
                 ...state,
                 user: action.payload,
             };
-        case 'SET_USER_DETAILS':
+        case SET_USER_DETAILS:
             return {
                 ...state,
                 userDetails: action.payload,

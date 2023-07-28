@@ -1,10 +1,14 @@
 import axios from "axios";
+import {UserDetails} from "../interfaces/UserDetails.ts";
 
-const baseUrl = "http://localhost:8080";
-const accountDetailsPath = "/myAccount";
+export const baseUrl = "http://localhost:8080";
+export const accountDetailsPath = "/myAccount";
+export const modifyAccountDetailsPath = "/updateAccount";
+
+export const fetchDeleteUserDetails = "/deleteAccount";
 
 
-export const getUserDetails = ( email:string | undefined, token:string ) => {
+export const getUserDetails = ( email:string | undefined, token:string | undefined ) => {
     return axios({
         method: 'get',
         url: `${baseUrl}${accountDetailsPath}?email=${email}`,
@@ -13,3 +17,19 @@ export const getUserDetails = ( email:string | undefined, token:string ) => {
         }, withCredentials: true
     })
 }
+
+export const fetchModifyUserDetails = ( url:string | undefined, data: UserDetails,  token:string | undefined, crsfToken:string | undefined ) => {
+
+    return axios({
+        url: url,
+        method: 'put',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-CSRF-TOKEN': crsfToken
+        },
+        data: data,
+        withCredentials: true
+    })
+
+}
+
