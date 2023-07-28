@@ -18,10 +18,10 @@ const TextFieldTheme = createTheme({
             styleOverrides: {
                 filled: {
                     color: '#BB86FC',
+                    '&.Mui-focused': {
+                        color: '#BB86FC',
+                    },
                 },
-                focused: {
-                    color: '#BB86FC'
-                }
             },
         },
     },

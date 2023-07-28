@@ -10,7 +10,7 @@ const  NavBarTheme = createTheme({
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    boxShadow: '0px 5px 15px 3px rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0px 5px 15px 3px rgba(30, 30, 30, 0.5)',
                 },
             },
         },

@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store/store.ts";
 import {Col, Row} from "react-bootstrap";
 import Button from "@mui/material/Button";
-import {useState} from "react";
+import {FC, useState} from "react";
 import {ThemeProvider} from '@mui/material/styles';
 import StandardButtonTheme from "../themes/StandardButtonTheme.ts";
 import ModifyUserForm from "./forms/ModifyUserForm.tsx";
@@ -15,29 +15,17 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CircularWhite from "../themes/CircularWhite.ts";
 import axios from "axios";
 import {baseUrl, fetchDeleteUserDetails} from "../api/userApi.ts";
-import {setUserDetails} from "../redux/actions/UserActions.ts";
+import {setUserDetails} from "../redux/actions/userActions.ts";
 
 
-// Augment the palette to include a violet color
-declare module '@mui/material/styles' {
-    interface Palette {
-        violet: Palette['primary'];
-    }
 
-    interface PaletteOptions {
-        violet?: PaletteOptions['primary'];
-    }
-}
 
-// Update the Button's color options to include a violet option
-declare module '@mui/material/Button' {
-    interface ButtonPropsColorOverrides {
-        violet: true;
-    }
+interface UserDetailsProps {
+    fetchUserDetails: () => Promise<void>;
 }
 
 
-const UserDetailsCard = () => {
+const UserDetailsCard: FC<UserDetailsProps> = ({fetchUserDetails}: UserDetailsProps) => {
     const user = useSelector((state: RootState) => state.STORE1.user);
     const userDetails = useSelector((state: RootState) => state.STORE1.userDetails);
     const [modifyUser, setModifyUser] = useState<boolean>(false);
@@ -53,6 +41,7 @@ const UserDetailsCard = () => {
     }
 
     const fetchDeleteUser = () => {
+
         setDeletingUser(true)
         axios({
             url: baseUrl + fetchDeleteUserDetails + "?email=" + user.email,
@@ -61,14 +50,18 @@ const UserDetailsCard = () => {
                 "Authorization": "Bearer " + user.token,
                 "X-XSRF-TOKEN": user.xsrfToken
             }
+
         }).then((r) => {
-            setDeletingUser(false)
-            console.log(r.data.body)
+
             dispatch(setUserDetails(r.data.body))
+            fetchUserDetails()
+            setDeletingUser(false)
 
         }).catch((error) => {
+
             setDeletingUser(false)
             console.log(error)
+
         })
     }
 

@@ -18,8 +18,8 @@ import {RootState} from "../redux/store/store.ts";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useKeycloak} from "@react-keycloak/web";
-import {setUser} from "../redux/actions/UserActions.ts";
-import jwtDecode from 'jwt-decode';
+import {setUser, setUserDetails} from "../redux/actions/userActions.ts";
+// import jwtDecode from 'jwt-decode';
 
 interface Props {
     /**
@@ -42,56 +42,65 @@ function NavbarMUI(props: Props) {
     const [navItems, setNavItems] = React.useState<string[]>(['Home', 'About', 'Contact', 'login', 'logout']);
     const dispatch = useDispatch();
 
+
+    //TODO: modificare sia il tempo di scadenza token su keycloak che il tempo di refresh di questo useEffect
     // Imposta un timeout per verificare la scadenza del token
     useEffect(() => {
-        const minValidity = 30; // Secondi
-        const refreshInterval = setInterval(() => {
-            keycloak.updateToken(minValidity)
-                .then(refreshed => {
-                    if (refreshed) {
-                        // Il token è stato rinnovato
-                        dispatch(setUser({
-                            ...user,
-                            token: keycloak.token as string,
-                        }));
-                        console.log("Token refreshed")
-                    } else {
-                        // Il token era ancora valido, non era necessario rinnovare
-                        console.log("Token not refreshed, still valid")
-                    }
-                })
-                .catch(() => {
-                    // Errore durante il tentativo di rinnovo del token, potrebbe essere necessario gestire il logout qui
-                    keycloak.logout();
-                    console.log("Failed to refresh the token, or the session has expired")
-                });
-        }, 10000); // Controlla ogni 10 secondi
 
-        return () => clearInterval(refreshInterval); // Pulisce l'intervallo quando il componente viene smontato
+            const minValidity = 15; // Secondi
+            const refreshInterval = setInterval(() => {
+                if (user.token) {
+                    keycloak.updateToken(minValidity)
+                        .then(refreshed => {
+                            if (refreshed) {
+                                dispatch(setUser({
+                                    ...user,
+                                    token: keycloak.token as string,
+                                }))
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [keycloak]); // Dipendenza da keycloak
+                                console.log("Token refreshed")
+                            } else {
+                                // Il token era ancora valido, non era necessario rinnovare
+                                console.log("Token not refreshed, still valid")
+                            }
+                        })
+                        .catch(() => {
+                            // Errore durante il tentativo di rinnovo del token, potrebbe essere necessario gestire il logout qui
+                            keycloak.logout();
+                            console.log("Failed to refresh the token, or the session has expired")
+                        });
+                }
+
+            }, 10000); // Controlla ogni 10 secondi
+
+            return () => clearInterval(refreshInterval); // Pulisce l'intervallo quando il componente viene smontato
+
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [user.token]
+    )
+    ; // Dipendenza da keycloak
 
 
-    // Imposta i link del menu in base allo stato di autenticazione
-    // Imposta anche l'oggetto user nello store
+// Imposta i link del menu in base allo stato di autenticazione
+// Imposta anche l'oggetto user nello store
     useEffect(() => {
 
         if (keycloak.authenticated) {
+
             setNavItems(['Home', 'Profilo', 'Logout']);
             keycloak.loadUserProfile()
                 .then((profile) => {
                     dispatch(setUser({
-                        email: profile.email,
-                        firstName: profile.firstName,
-                        lastName: profile.lastName,
+                        email: profile.email ? profile.email : "",
+                        firstName: profile.firstName ? profile.firstName : "",
+                        lastName: profile.lastName ? profile.lastName : "",
                         token: keycloak.token as string,
                         xsrfToken: ""
                     }));
+
                     // console.log(keycloak.tokenParsed)
-                    const token = keycloak.token as string;
-                    const decodedToken = jwtDecode(token);
-                    console.log(decodedToken)
+                    // const token = keycloak.token as string;
+                    // const decodedToken = jwtDecode(token);
                 });
         } else {
             setNavItems(['Home', 'About', 'Contact', 'Login'])
@@ -102,6 +111,14 @@ function NavbarMUI(props: Props) {
                 token: "",
                 xsrfToken: ""
             }))
+
+            dispatch(setUserDetails({
+                accountEmail: "",
+                firstName: "",
+                lastName: "",
+                telephoneNumber: "",
+                createDt: "",
+            }))
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [keycloak.authenticated]);
@@ -110,6 +127,7 @@ function NavbarMUI(props: Props) {
 
         switch (path) {
             case 'Login':
+                navigate('/secured_page')
                 keycloak.login()
                 break;
 
@@ -137,7 +155,7 @@ function NavbarMUI(props: Props) {
         }
     }
 
-    const locationConverter = (item:string) => {
+    const locationConverter = (item: string) => {
         switch (item) {
             case 'Home':
                 return '/';
@@ -146,7 +164,6 @@ function NavbarMUI(props: Props) {
         }
     }
 
-    console.log(location.pathname)
 
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
@@ -181,7 +198,7 @@ function NavbarMUI(props: Props) {
     const container = window !== undefined ? () => window().document.body : undefined;
 
     return (
-        <Box sx={{display: 'flex', marginBottom: '100px'}}>
+        <Box sx={{display: 'flex'}}>
             <CssBaseline/>
             <AppBar component="nav">
                 <Toolbar>
@@ -199,11 +216,13 @@ function NavbarMUI(props: Props) {
                         component="div"
                         sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
                     >
-                        {user.email}
+                        {user.email ? user.email : 'Forestiero'}
                     </Typography>
                     <Box sx={{display: {xs: 'none', sm: 'block'}}}>
                         {navItems.map((item) => (
-                            <Button key={item} sx={{color: location.pathname != locationConverter(item) ? '#fff' : 'var(--highlight)',}} onClick={() => customNavigation(item)}>
+                            <Button key={item}
+                                    sx={{color: location.pathname != locationConverter(item) ? '#fff' : 'var(--highlight)',}}
+                                    onClick={() => customNavigation(item)}>
                                 {item}
                             </Button>
                         ))}

@@ -7,7 +7,7 @@ const CardTheme = createTheme({
                 root: {
                     backgroundColor: '#283b48', // Cambia il colore di sfondo
                     color: 'white', // Cambia il colore del testo
-                    boxShadow: '-5px -5px 15px 3px rgba(255, 255, 255, 0.1)',
+                    boxShadow: '-5px -5px 15px 3px rgba(30, 30, 30, 0.5)',
                 },
             },
         },

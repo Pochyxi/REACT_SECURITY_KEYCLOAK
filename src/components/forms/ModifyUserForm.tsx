@@ -4,7 +4,7 @@ import {UserDetails} from "../../interfaces/UserDetails.ts";
 import {baseUrl, fetchModifyUserDetails, modifyAccountDetailsPath} from "../../api/userApi.ts";
 import {RootState} from "../../redux/store/store.ts";
 import {useDispatch, useSelector} from "react-redux";
-import {setUserDetails} from "../../redux/actions/UserActions.ts";
+import {setUserDetails} from "../../redux/actions/userActions.ts";
 import LoadingButton from '@mui/lab/LoadingButton';
 import StandardButtonTheme from "../../themes/StandardButtonTheme.ts";
 import {ThemeProvider} from "@mui/material/styles";
