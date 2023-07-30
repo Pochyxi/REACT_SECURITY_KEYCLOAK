@@ -22,7 +22,7 @@ export const setUserDetails = (userDetails: UserDetails | null) => ({
     payload : userDetails
 });
 
-export const GET_SET_UserDetails = (email: string | "", token: string | ""): AppThunk => {
+export const GET_SET_UserDetails = (email: string | undefined, token: string | undefined): AppThunk => {
 
     return async (dispatch, getState) => {
 
@@ -41,6 +41,8 @@ export const GET_SET_UserDetails = (email: string | "", token: string | ""): App
 
             if (response.status === 200) {
 
+                console.log(response.data.body)
+
                 dispatch(setUser({
                     ...getState().STORE1.user,
                     xsrfToken: response.headers['x-xsrf-token']
@@ -50,6 +52,72 @@ export const GET_SET_UserDetails = (email: string | "", token: string | ""): App
                     ...response.data.body,
                     telephoneNumber: response.data.body.telephoneNumber ? response.data.body.telephoneNumber : ""
                 }))
+
+                dispatch(setFetchingFlag(false))
+            }
+        } catch (e) {
+            console.log(e);
+            dispatch(setFetchingFlag(false))
+        }
+    }
+}
+
+
+export const PUT_SET_ModifyUserDetails = (url: string | undefined, data:UserDetails, token: string | undefined, crsfToken:string | undefined): AppThunk => {
+
+    return async (dispatch) => {
+
+        try {
+
+            dispatch(setFetchingFlag(true))
+            const response = await axios({
+                url: url,
+                method: 'put',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-CSRF-TOKEN': crsfToken
+                },
+                data: data,
+                withCredentials: true
+            })
+
+            if (response.status === 200) {
+
+                dispatch(setUserDetails({
+                    ...response.data.body,
+                    telephoneNumber: response.data.body.telephoneNumber ? response.data.body.telephoneNumber : ""
+                }))
+
+                dispatch(setFetchingFlag(false))
+            }
+        } catch (e) {
+            console.log(e);
+            dispatch(setFetchingFlag(false))
+        }
+    }
+}
+
+export const DELETE_SET_ModifyUserDetails = (url: string | undefined, email: string | undefined, token: string, xsrfToken: string | undefined): AppThunk => {
+
+    return async (dispatch) => {
+
+        try {
+
+            dispatch(setFetchingFlag(true))
+            const response = await axios({
+                url: url + "?email=" + email,
+                method: 'delete',
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "X-XSRF-TOKEN": xsrfToken
+                }
+            })
+
+            if (response.status === 200) {
+
+                dispatch(GET_SET_UserDetails(email, token))
+
+                console.log(response.data.body)
 
                 dispatch(setFetchingFlag(false))
             }

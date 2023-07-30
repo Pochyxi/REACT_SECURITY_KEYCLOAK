@@ -14,11 +14,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {useLocation, useNavigate} from "react-router-dom";
-import {RootState} from "../redux/store/store.ts";
+import {AppDispatch, RootState} from "../redux/store/store.ts";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useKeycloak} from "@react-keycloak/web";
-import {setUser, setUserDetails} from "../redux/actions/userActions.ts";
+import {GET_SET_UserDetails, setUser, setUserDetails} from "../redux/actions/userActions.ts";
+
 // import jwtDecode from 'jwt-decode';
 
 interface Props {
@@ -39,12 +40,20 @@ function NavbarMUI(props: Props) {
     const navigate = useNavigate();
     const location = useLocation();
     const user = useSelector((state: RootState) => state.STORE1.user);
-    const [navItems, setNavItems] = React.useState<string[]>(['Home', 'About', 'Contact', 'login', 'logout']);
-    const dispatch = useDispatch();
+    const [navItems, setNavItems] = React.useState<string[]>([]);
+    const dispatch: AppDispatch = useDispatch();
 
+    useEffect(() => {
+        console.log("NavbarMUI useEffect")
+        console.log("keycloak.authenticated: " + keycloak.authenticated)
+        // Eseguiamo la nostra funzione per fare il fetch dei dati
+        if (keycloak.authenticated) dispatch(GET_SET_UserDetails(user.email, keycloak.token as string))
 
-    //TODO: modificare sia il tempo di scadenza token su keycloak che il tempo di refresh di questo useEffect
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [keycloak.authenticated]);
+
     // Imposta un timeout per verificare la scadenza del token
+    //TODO: modificare sia il tempo di scadenza token su keycloak che il tempo di refresh di questo useEffect
     useEffect(() => {
 
             const minValidity = 15; // Secondi
@@ -53,11 +62,6 @@ function NavbarMUI(props: Props) {
                     keycloak.updateToken(minValidity)
                         .then(refreshed => {
                             if (refreshed) {
-                                dispatch(setUser({
-                                    ...user,
-                                    token: keycloak.token as string,
-                                }))
-
                                 console.log("Token refreshed")
                             } else {
                                 // Il token era ancora valido, non era necessario rinnovare
@@ -81,13 +85,15 @@ function NavbarMUI(props: Props) {
     ; // Dipendenza da keycloak
 
 
-// Imposta i link del menu in base allo stato di autenticazione
-// Imposta anche l'oggetto user nello store
+    // Imposta i link del menu in base allo stato di autenticazione
+    // Imposta anche l'oggetto user nello store
     useEffect(() => {
 
-        if (keycloak.authenticated) {
+        if (!keycloak.authenticated && !user.token) setNavItems(['Home', 'Login'])
 
-            setNavItems(['Home', 'Profilo', 'Logout']);
+        if (keycloak.authenticated) {
+            // if (user.token) setNavItems(['Home', 'Profilo', 'Logout']);
+
             keycloak.loadUserProfile()
                 .then((profile) => {
                     dispatch(setUser({
@@ -97,29 +103,11 @@ function NavbarMUI(props: Props) {
                         token: keycloak.token as string,
                         xsrfToken: ""
                     }));
-
-                    // console.log(keycloak.tokenParsed)
-                    // const token = keycloak.token as string;
-                    // const decodedToken = jwtDecode(token);
+                    setNavItems(['Home', 'Teams', 'Profilo', 'Logout'])
                 });
-        } else {
-            setNavItems(['Home', 'About', 'Contact', 'Login'])
-            dispatch(setUser({
-                email: "",
-                firstName: "",
-                lastName: "",
-                token: "",
-                xsrfToken: ""
-            }))
-
-            dispatch(setUserDetails({
-                accountEmail: "",
-                firstName: "",
-                lastName: "",
-                telephoneNumber: "",
-                createDt: "",
-            }))
         }
+
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [keycloak.authenticated]);
 
@@ -127,11 +115,25 @@ function NavbarMUI(props: Props) {
 
         switch (path) {
             case 'Login':
-                navigate('/secured_page')
-                keycloak.login()
+                keycloak.login();
                 break;
 
             case 'Logout':
+                dispatch(setUser({
+                    email: "",
+                    firstName: "",
+                    lastName: "",
+                    token: "",
+                    xsrfToken: ""
+                }))
+
+                dispatch(setUserDetails({
+                    accountEmail: "",
+                    firstName: "",
+                    lastName: "",
+                    telephoneNumber: "",
+                    createDt: "",
+                }))
                 keycloak.logout();
                 break;
 
@@ -144,10 +146,9 @@ function NavbarMUI(props: Props) {
                 navigate('/secured_page');
                 break;
 
-            case 'Contact':
-                navigate('/contact');
+            case 'Teams':
+                navigate('/teams_page');
                 break;
-
 
             default:
                 navigate('/');
@@ -170,8 +171,8 @@ function NavbarMUI(props: Props) {
     };
 
     const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{textAlign: 'center'}}>
-            <Typography variant="h6" sx={{my: 2}}>
+        <Box onClick={handleDrawerToggle} sx={{textAlign: 'center', backgroundColor: '#283b48', height: '100%'}}>
+            <Typography variant="h6" sx={{my: 2, color: '#fff'}}>
                 {user.firstName} {user.lastName}
             </Typography>
             <Divider/>

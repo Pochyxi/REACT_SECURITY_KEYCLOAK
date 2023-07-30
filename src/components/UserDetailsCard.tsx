@@ -1,9 +1,9 @@
 import {Card, CardContent, CircularProgress} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../redux/store/store.ts";
+import {AppDispatch, RootState} from "../redux/store/store.ts";
 import {Col, Row} from "react-bootstrap";
 import Button from "@mui/material/Button";
-import {FC, useState} from "react";
+import {useState} from "react";
 import {ThemeProvider} from '@mui/material/styles';
 import StandardButtonTheme from "../themes/StandardButtonTheme.ts";
 import ModifyUserForm from "./forms/ModifyUserForm.tsx";
@@ -13,24 +13,26 @@ import CardTheme from "../themes/CardTheme.ts";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import LoadingButton from "@mui/lab/LoadingButton";
 import CircularWhite from "../themes/CircularWhite.ts";
-import axios from "axios";
 import {baseUrl, fetchDeleteUserDetails} from "../api/userApi.ts";
-import {setUserDetails} from "../redux/actions/userActions.ts";
+import {DELETE_SET_ModifyUserDetails} from "../redux/actions/userActions.ts";
+import DynamicAlertMUI from "./DynamicAlertMUI.tsx";
+import {useKeycloak} from "@react-keycloak/web";
 
 
-
-
-interface UserDetailsProps {
-    fetchUserDetails: () => Promise<void>;
-}
-
-
-const UserDetailsCard: FC<UserDetailsProps> = ({fetchUserDetails}: UserDetailsProps) => {
+const UserDetailsCard = () => {
     const user = useSelector((state: RootState) => state.STORE1.user);
     const userDetails = useSelector((state: RootState) => state.STORE1.userDetails);
     const [modifyUser, setModifyUser] = useState<boolean>(false);
-    const [deletingUser, setDeletingUser] = useState<boolean>(false);
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
+    const fetchingFlag = useSelector((state: RootState) => state.STORE2.utilitiesVar.fetchingFlag);
+    const {keycloak} = useKeycloak();
+
+    const [open, setOpen] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>("");
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const colInfoStyle = {
         color: 'var(--background-primary)',
@@ -41,109 +43,94 @@ const UserDetailsCard: FC<UserDetailsProps> = ({fetchUserDetails}: UserDetailsPr
     }
 
     const fetchDeleteUser = () => {
-
-        setDeletingUser(true)
-        axios({
-            url: baseUrl + fetchDeleteUserDetails + "?email=" + user.email,
-            method: 'delete',
-            headers: {
-                "Authorization": "Bearer " + user.token,
-                "X-XSRF-TOKEN": user.xsrfToken
-            }
-
-        }).then((r) => {
-
-            dispatch(setUserDetails(r.data.body))
-            fetchUserDetails()
-            setDeletingUser(false)
-
-        }).catch((error) => {
-
-            setDeletingUser(false)
-            console.log(error)
-
-        })
+        dispatch(DELETE_SET_ModifyUserDetails(baseUrl + fetchDeleteUserDetails, user.email, keycloak.token as string, user.xsrfToken))
     }
 
 
     return (
         <ThemeProvider theme={CardTheme}>
-            <Card>
-                <CardContent>
-                    <Row>
-                        <Col className={'d-flex justify-content-start'}>
-                            <ThemeProvider theme={StandardButtonTheme}>
-                                <Button variant="contained" color={'softBlack'} startIcon={
-                                    modifyUser ? <CloseIcon/> :
-                                        <ManageAccountsIcon/>
+            {
+                    <Card sx={{width: '100%'}}>
+                        <DynamicAlertMUI open={open} handleClose={handleClose} message={message} />
+                        <CardContent>
+                            <Row>
+                                <Col className={'d-flex justify-content-start'}>
+                                    <ThemeProvider theme={StandardButtonTheme}>
+                                        <Button variant="contained" color={'softBlack'} startIcon={
+                                            modifyUser ? <CloseIcon/> :
+                                                <ManageAccountsIcon/>
+                                        }
+                                                onClick={() => setModifyUser(!modifyUser)}
+                                        >
+                                            {modifyUser ? 'Annulla' : 'Modifica'}
+                                        </Button>
+                                    </ThemeProvider>
+                                </Col>
+                            </Row>
+                            <Row className={'flex-column my-2'}>
+                                {
+                                    !modifyUser ?
+                                        <>
+                                            <Col style={{color: 'var(--highlight)'}}>Nome</Col>
+                                            <Col style={colInfoStyle}>
+                                                <p className={'h5 m-0'}>{userDetails.firstName}</p>
+                                            </Col>
+
+                                            <Col style={{color: 'var(--highlight)'}}>Cognome</Col>
+                                            <Col style={colInfoStyle}>
+                                                <p className={'h5 m-0'}>{userDetails.lastName}</p>
+                                            </Col>
+
+                                            <Col style={{color: 'var(--highlight)'}}>Email: </Col>
+                                            <Col style={colInfoStyle}>
+                                                <p className={'h6 m-0'}>{userDetails.accountEmail}</p>
+                                            </Col>
+
+                                            <Col style={{color: 'var(--highlight)'}}>Data iscrizione</Col>
+                                            <Col style={colInfoStyle}>
+                                                <p className={'h6 m-0'}>{userDetails?.createDt}</p>
+                                            </Col>
+
+                                            <Col style={{color: 'var(--highlight)'}}>Telefono</Col>
+                                            <Col style={colInfoStyle}>
+                                                <p className={'h6 m-0'}>{userDetails.telephoneNumber}</p>
+                                            </Col>
+                                            <Col className={'d-flex justify-content-end'}>
+                                                <ThemeProvider theme={StandardButtonTheme}>
+                                                    <LoadingButton
+                                                        type={"button"}
+                                                        onClick={fetchDeleteUser}
+                                                        loading={fetchingFlag}
+                                                        loadingPosition="center"
+                                                        startIcon={<RestartAltIcon/>}
+                                                        variant="contained"
+                                                        color="softBlack"
+                                                        loadingIndicator={
+                                                            <ThemeProvider theme={CircularWhite}>
+                                                                <CircularProgress color="secondary" size={24}/>
+                                                            </ThemeProvider>
+                                                        }
+                                                    >
+                                                        Ripristina
+                                                    </LoadingButton>
+                                                </ThemeProvider>
+                                            </Col>
+                                        </>
+                                        : <ModifyUserForm
+                                            accountEmail={userDetails.accountEmail}
+                                            telephoneNumber={userDetails.telephoneNumber}
+                                            firstName={userDetails.firstName}
+                                            lastName={userDetails.lastName}
+                                            setFormFlag={setModifyUser}
+                                            setOpen={setOpen}
+                                            setMessage={setMessage}
+                                        />
                                 }
-                                        onClick={() => setModifyUser(!modifyUser)}
-                                >
-                                    {modifyUser ? 'Annulla' : 'Modifica'}
-                                </Button>
-                            </ThemeProvider>
-                        </Col>
-                    </Row>
-                    <Row className={'flex-column my-2'}>
-                        {
-                            !modifyUser ?
-                                <>
-                                    <Col style={{color: 'var(--highlight)'}}>Nome</Col>
-                                    <Col style={colInfoStyle}>
-                                        <p className={'h5 m-0'}>{userDetails.firstName}</p>
-                                    </Col>
+                            </Row>
+                        </CardContent>
+                    </Card>
+            }
 
-                                    <Col style={{color: 'var(--highlight)'}}>Cognome</Col>
-                                    <Col style={colInfoStyle}>
-                                        <p className={'h5 m-0'}>{userDetails.lastName}</p>
-                                    </Col>
-
-                                    <Col style={{color: 'var(--highlight)'}}>Email: </Col>
-                                    <Col style={colInfoStyle}>
-                                        <p className={'h6 m-0'}>{userDetails.accountEmail}</p>
-                                    </Col>
-
-                                    <Col style={{color: 'var(--highlight)'}}>Data iscrizione</Col>
-                                    <Col style={colInfoStyle}>
-                                        <p className={'h6 m-0'}>{userDetails?.createDt}</p>
-                                    </Col>
-
-                                    <Col style={{color: 'var(--highlight)'}}>Telefono</Col>
-                                    <Col style={colInfoStyle}>
-                                        <p className={'h6 m-0'}>{userDetails.telephoneNumber}</p>
-                                    </Col>
-                                    <Col className={'d-flex justify-content-end'}>
-                                        <ThemeProvider theme={StandardButtonTheme}>
-                                            <LoadingButton
-                                                type={"button"}
-                                                onClick={fetchDeleteUser}
-                                                loading={deletingUser}
-                                                loadingPosition="center"
-                                                startIcon={<RestartAltIcon/>}
-                                                variant="contained"
-                                                color="softBlack"
-                                                loadingIndicator={
-                                                    <ThemeProvider theme={CircularWhite}>
-                                                        <CircularProgress color="secondary" size={24}/>
-                                                    </ThemeProvider>
-                                                }
-                                            >
-                                                Ripristina
-                                            </LoadingButton>
-                                        </ThemeProvider>
-                                    </Col>
-                                </>
-                                : <ModifyUserForm
-                                    accountEmail={userDetails.accountEmail}
-                                    telephoneNumber={userDetails.telephoneNumber}
-                                    firstName={userDetails.firstName}
-                                    lastName={userDetails.lastName}
-                                    setFormFlag={setModifyUser}
-                                />
-                        }
-                    </Row>
-                </CardContent>
-            </Card>
         </ThemeProvider>
     );
 };
