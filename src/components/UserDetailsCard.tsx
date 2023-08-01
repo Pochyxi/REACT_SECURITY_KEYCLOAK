@@ -13,7 +13,7 @@ import CardTheme from "../themes/CardTheme.ts";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import LoadingButton from "@mui/lab/LoadingButton";
 import CircularWhite from "../themes/CircularWhite.ts";
-import {baseUrl, fetchDeleteUserDetails} from "../api/userApi.ts";
+import {accountPath, baseUrl} from "../api/userApi.ts";
 import {DELETE_SET_ModifyUserDetails} from "../redux/actions/userActions.ts";
 import DynamicAlertMUI from "./DynamicAlertMUI.tsx";
 import {useKeycloak} from "@react-keycloak/web";
@@ -43,7 +43,7 @@ const UserDetailsCard = () => {
     }
 
     const fetchDeleteUser = () => {
-        dispatch(DELETE_SET_ModifyUserDetails(baseUrl + fetchDeleteUserDetails, user.email, keycloak.token as string, user.xsrfToken))
+        dispatch(DELETE_SET_ModifyUserDetails(baseUrl + accountPath, user.email, keycloak.token as string, user.xsrfToken))
     }
 
 

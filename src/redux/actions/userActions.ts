@@ -1,7 +1,7 @@
 import {User} from "../../interfaces/User.ts";
 import {UserDetails} from "../../interfaces/UserDetails.ts";
 import axios from "axios";
-import {accountDetailsPath, baseUrl} from "../../api/userApi.ts";
+import {accountPath, baseUrl} from "../../api/userApi.ts";
 import {RootState} from "../store/store.ts";
 import { Action } from '@reduxjs/toolkit';
 import { ThunkAction } from 'redux-thunk';
@@ -32,7 +32,7 @@ export const GET_SET_UserDetails = (email: string | undefined, token: string | u
             const response = await axios({
 
                 method: 'get',
-                url: `${baseUrl}${accountDetailsPath}?email=${email}`,
+                url: `${baseUrl}${accountPath}?email=${email}`,
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }, withCredentials: true

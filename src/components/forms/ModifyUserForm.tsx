@@ -1,7 +1,7 @@
 import {Formik} from "formik";
 import {FC} from "react";
 import {UserDetails} from "../../interfaces/UserDetails.ts";
-import {baseUrl, modifyAccountDetailsPath} from "../../api/userApi.ts";
+import {accountPath, baseUrl} from "../../api/userApi.ts";
 import {AppDispatch, RootState} from "../../redux/store/store.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {PUT_SET_ModifyUserDetails} from "../../redux/actions/userActions.ts";
@@ -34,7 +34,7 @@ const ModifyUserForm: FC<ModifyUserFormProps> = (props: ModifyUserFormProps) => 
 
         const modify = (values: UserDetails) => {
 
-            dispatch(PUT_SET_ModifyUserDetails(baseUrl + modifyAccountDetailsPath, values, keycloak.token, user.xsrfToken))
+            dispatch(PUT_SET_ModifyUserDetails(baseUrl + accountPath, values, keycloak.token, user.xsrfToken))
 
             props.setMessage("Utente modificato con successo!")
             props.setOpen(true)

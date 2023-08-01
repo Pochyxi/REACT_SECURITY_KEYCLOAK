@@ -3,7 +3,7 @@ import {createTheme} from "@mui/material/styles";
 const  NavBarTheme = createTheme({
     palette: {
         primary: {
-            main: '#283b48', // this will be the color of your AppBar
+            main: '#0a3d0b', // this will be the color of your AppBar
         },
     },
     components: {

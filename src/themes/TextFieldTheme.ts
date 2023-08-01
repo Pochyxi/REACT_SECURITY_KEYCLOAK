@@ -3,7 +3,7 @@ import {createTheme} from "@mui/material/styles";
 const TextFieldTheme = createTheme({
     palette: {
         primary: {
-            main: '#BB86FC', // this will be the color of your AppBar
+            main: '#138016', // this will be the color of your AppBar
         }
     },
     components: {
@@ -11,15 +11,18 @@ const TextFieldTheme = createTheme({
             styleOverrides: {
                 input: {
                     color: 'whitesmoke',
+                    fontSize: '1.2rem',
+                    margin: '10px 0'
                 },
             },
         },
         MuiInputLabel: {
             styleOverrides: {
                 filled: {
-                    color: '#BB86FC',
+                    color: '#138016',
+                    fontSize: '1.2rem',
                     '&.Mui-focused': {
-                        color: '#BB86FC',
+                        color: '#138016',
                     },
                 },
             },
