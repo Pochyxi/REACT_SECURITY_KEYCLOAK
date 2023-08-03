@@ -20,7 +20,6 @@ function App() {
         <ReactKeycloakProvider initOptions={
             {
                 pkceMethod: 'S256',
-                onLoad: 'check-sso',
             }
         } authClient={keycloak}>
             <BrowserRouter>

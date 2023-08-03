@@ -41,7 +41,7 @@ export const GET_SET_UserDetails = (email: string | undefined, token: string | u
 
             if (response.status === 200) {
 
-                console.log(response.data.body)
+                console.log(response.data)
 
                 dispatch(setUser({
                     ...getState().STORE1.user,
@@ -49,8 +49,8 @@ export const GET_SET_UserDetails = (email: string | undefined, token: string | u
                 }))
 
                 dispatch(setUserDetails({
-                    ...response.data.body,
-                    telephoneNumber: response.data.body.telephoneNumber ? response.data.body.telephoneNumber : ""
+                    ...response.data,
+                    telephoneNumber: response.data.telephoneNumber ? response.data.telephoneNumber : ""
                 }))
 
                 dispatch(setFetchingFlag(false))
