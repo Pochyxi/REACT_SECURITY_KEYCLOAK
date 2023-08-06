@@ -48,6 +48,8 @@ export const GET_SET_TEAMS = (email: string | undefined, token: string | undefin
         } catch
             (e) {
             console.log(e);
+        } finally {
+            dispatch(setFetchingFlag(false))
         }
     }
 }
