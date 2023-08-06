@@ -16,7 +16,6 @@ const initialState = {
         email: "",
         firstName: "",
         lastName: "",
-        token: "",
         xsrfToken: ""
     },
     userDetails: {

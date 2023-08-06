@@ -16,8 +16,7 @@ const ProfilePage = () => {
     const dispatch: AppDispatch = useDispatch();
 
     useEffect(() => {
-        if (!keycloak.authenticated && !user.token) navigate('/')
-
+        if (!keycloak.authenticated && !user.email) navigate('/')
         if (keycloak.authenticated) dispatch(GET_SET_UserDetails(user.email, keycloak.token as string))
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

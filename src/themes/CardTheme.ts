@@ -5,8 +5,8 @@ const CardTheme = createTheme({
         MuiCard: {
             styleOverrides: {
                 root: {
-                    backgroundColor: '#283b48', // Cambia il colore di sfondo
-                    color: 'white', // Cambia il colore del testo
+                    backgroundColor: '#062409',
+                    color: 'white',
                     boxShadow: '-5px -5px 15px 3px rgba(30, 30, 30, 0.5)',
                 },
             },

@@ -1,7 +1,7 @@
 import {User} from "../../interfaces/User.ts";
 import {UserDetails} from "../../interfaces/UserDetails.ts";
 import axios from "axios";
-import {accountPath, baseUrl} from "../../api/userApi.ts";
+import {accountPath, baseUrl} from "../../api/Api.ts";
 import {RootState} from "../store/store.ts";
 import { Action } from '@reduxjs/toolkit';
 import { ThunkAction } from 'redux-thunk';
@@ -25,6 +25,7 @@ export const setUserDetails = (userDetails: UserDetails | null) => ({
 export const GET_SET_UserDetails = (email: string | undefined, token: string | undefined): AppThunk => {
 
     return async (dispatch, getState) => {
+        let crsfToken = ''
 
         try {
 
@@ -39,14 +40,15 @@ export const GET_SET_UserDetails = (email: string | undefined, token: string | u
 
             })
 
-            if (response.status === 200) {
+            if (response.status === 200 && response.data !== 'Nessun account trovato con questa email') {
 
-                console.log(response.data)
 
                 dispatch(setUser({
                     ...getState().STORE1.user,
                     xsrfToken: response.headers['x-xsrf-token']
                 }))
+
+                crsfToken = response.headers['x-xsrf-token']
 
                 dispatch(setUserDetails({
                     ...response.data,
@@ -54,6 +56,38 @@ export const GET_SET_UserDetails = (email: string | undefined, token: string | u
                 }))
 
                 dispatch(setFetchingFlag(false))
+            } else if (response.status === 200 && response.data === 'Nessun account trovato con questa email') {
+                try {
+                    dispatch(setFetchingFlag(true))
+                    const response = await axios({
+                        url: baseUrl + accountPath,
+                        method: 'post',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'X-CSRF-TOKEN': crsfToken
+                        },
+                        data: {
+                            accountEmail: getState().STORE1.user?.email,
+                            firstName: getState().STORE1.user?.firstName,
+                            lastName: getState().STORE1.user?.lastName,
+                            telephoneNumber: ''
+                        },
+                        withCredentials: true
+                    })
+
+                    if (response.status === 200) {
+
+                        dispatch(setUserDetails({
+                            ...response.data,
+                            telephoneNumber: response.data.telephoneNumber ? response.data.telephoneNumber : ""
+                        }))
+
+                        dispatch(setFetchingFlag(false))
+                    }
+
+                }catch (e) {
+                    console.log(e);
+                }
             }
         } catch (e) {
             console.log(e);
@@ -84,8 +118,8 @@ export const PUT_SET_ModifyUserDetails = (url: string | undefined, data:UserDeta
             if (response.status === 200) {
 
                 dispatch(setUserDetails({
-                    ...response.data.body,
-                    telephoneNumber: response.data.body.telephoneNumber ? response.data.body.telephoneNumber : ""
+                    ...response.data,
+                    telephoneNumber: response.data.telephoneNumber ? response.data.telephoneNumber : ""
                 }))
 
                 dispatch(setFetchingFlag(false))
@@ -117,7 +151,7 @@ export const DELETE_SET_ModifyUserDetails = (url: string | undefined, email: str
 
                 dispatch(GET_SET_UserDetails(email, token))
 
-                console.log(response.data.body)
+                console.log(response.data)
 
                 dispatch(setFetchingFlag(false))
             }

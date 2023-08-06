@@ -43,22 +43,52 @@ function NavbarMUI(props: Props) {
     const [navItems, setNavItems] = React.useState<string[]>([]);
     const dispatch: AppDispatch = useDispatch();
 
+    const logout_ = () => {
+        console.log("logout_")
+        const sessionStorageKeys = ['http://127.0.0.1:5173/', 'http://localhost8180/'];
+        const localStorageKeys = ['http://127.0.0.1:5173/', 'http://localhost8180/'];
+        const cookieKeys = ['http://127.0.0.1:5173/', 'http://localhost8180/'];
+
+        // Per cancellare dati specifici in sessionStorage
+        sessionStorageKeys.forEach(key => {
+            sessionStorage.removeItem(key);
+        });
+
+        // Per cancellare dati specifici in localStorage
+        localStorageKeys.forEach(key => {
+            localStorage.removeItem(key);
+        });
+
+        // Per cancellare cookie specifici
+        cookieKeys.forEach(key => {
+            document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        });
+
+        keycloak.logout();
+    }
+
     useEffect(() => {
-        console.log("NavbarMUI useEffect")
-        console.log("keycloak.authenticated: " + keycloak.authenticated)
+        console.log("authenticato: " + keycloak.authenticated)
+
         // Eseguiamo la nostra funzione per fare il fetch dei dati
-        if (keycloak.authenticated) dispatch(GET_SET_UserDetails(user.email, keycloak.token as string))
+        if (keycloak.authenticated && location.pathname != '/profile') {
+            keycloak.loadUserProfile().then((profile) => {
+                    dispatch(GET_SET_UserDetails(profile.email, keycloak.token as string))
+                }
+            )
+        }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [keycloak.authenticated]);
 
     // Imposta un timeout per verificare la scadenza del token
-    //TODO: modificare sia il tempo di scadenza token su keycloak che il tempo di refresh di questo useEffect
     useEffect(() => {
-
-            const minValidity = 15; // Secondi
+            console.log(keycloak.token as string)
+            const minValidity = 5 * 60; // Secondi
             const refreshInterval = setInterval(() => {
-                if (user.token) {
+                if (keycloak.authenticated) {
+                    console.log("Checking token validity")
+
                     keycloak.updateToken(minValidity)
                         .then(refreshed => {
                             if (refreshed) {
@@ -75,12 +105,12 @@ function NavbarMUI(props: Props) {
                         });
                 }
 
-            }, 10000); // Controlla ogni 10 secondi
+            }, 60000 * 5); // Controlla ogni 5 minuti
 
             return () => clearInterval(refreshInterval); // Pulisce l'intervallo quando il componente viene smontato
 
             // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [user.token]
+        }, [keycloak.authenticated]
     )
     ; // Dipendenza da keycloak
 
@@ -89,10 +119,7 @@ function NavbarMUI(props: Props) {
     // Imposta anche l'oggetto user nello store
     useEffect(() => {
 
-        if (!keycloak.authenticated && !user.token) setNavItems(['Home', 'Login'])
-
         if (keycloak.authenticated) {
-            // if (user.token) setNavItems(['Home', 'Profilo', 'Logout']);
 
             keycloak.loadUserProfile()
                 .then((profile) => {
@@ -100,11 +127,18 @@ function NavbarMUI(props: Props) {
                         email: profile.email ? profile.email : "",
                         firstName: profile.firstName ? profile.firstName : "",
                         lastName: profile.lastName ? profile.lastName : "",
-                        token: keycloak.token as string,
                         xsrfToken: ""
                     }));
                     setNavItems(['Home', 'Teams', 'Profilo', 'Logout'])
                 });
+        } else {
+            setNavItems(['Home', 'Login'])
+            dispatch(setUser({
+                email: "",
+                firstName: "",
+                lastName: "",
+                xsrfToken: ""
+            }))
         }
 
 
@@ -123,7 +157,6 @@ function NavbarMUI(props: Props) {
                     email: "",
                     firstName: "",
                     lastName: "",
-                    token: "",
                     xsrfToken: ""
                 }))
 
@@ -134,20 +167,19 @@ function NavbarMUI(props: Props) {
                     telephoneNumber: "",
                     createDt: "",
                 }))
-                keycloak.logout();
+                logout_()
                 break;
-
 
             case 'Home':
                 navigate('/');
                 break;
 
             case 'Profilo':
-                navigate('/secured_page');
+                navigate('/profile');
                 break;
 
             case 'Teams':
-                navigate('/teams_page');
+                navigate('/teams');
                 break;
 
             default:
@@ -157,12 +189,16 @@ function NavbarMUI(props: Props) {
     }
 
     const locationConverter = (item: string) => {
-        switch (item) {
-            case 'Home':
-                return '/';
-            case 'Profilo':
-                return '/secured_page';
+        console.log(item)
+        if (item === 'Teams' && location.pathname.startsWith('/teams')) {
+            return true
+        } else if (item === 'Profilo' && location.pathname.startsWith('/profile')) {
+            return true
+        } else if (item === 'Home' && location.pathname === '/') {
+            return true
         }
+
+        return false
     }
 
 
@@ -184,9 +220,11 @@ function NavbarMUI(props: Props) {
                         <ListItemButton
                             sx={{
                                 textAlign: 'center',
-                                color: location.pathname === locationConverter(item) ? '#fff' : 'var(--highlight)',
+                                color: '#A8D8A8',
+                                borderBottom: !locationConverter(item) ? 'none' : '2px solid #A8D8A8',
+                                borderRadius: '0px',
                             }}
-                            color={location.pathname === locationConverter(item) ? 'primary' : 'inherit'}
+                            color={!locationConverter(item) ? 'primary' : 'inherit'}
                             onClick={() => customNavigation(item)}>
                             <ListItemText primary={item}/>
                         </ListItemButton>
@@ -217,12 +255,16 @@ function NavbarMUI(props: Props) {
                         component="div"
                         sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
                     >
-                        {user.email ? user.email : 'Forestiero'}
+                        {user.firstName ? user.firstName : 'Ospite'}
                     </Typography>
                     <Box sx={{display: {xs: 'none', sm: 'block'}}}>
                         {navItems.map((item) => (
                             <Button key={item}
-                                    sx={{color: location.pathname != locationConverter(item) ? '#fff' : 'var(--highlight)',}}
+                                    sx={{
+                                        color: '#A8D8A8',
+                                        borderBottom: !locationConverter(item) ? 'none' : '2px solid #A8D8A8',
+                                        borderRadius: '0px',
+                                    }}
                                     onClick={() => customNavigation(item)}>
                                 {item}
                             </Button>

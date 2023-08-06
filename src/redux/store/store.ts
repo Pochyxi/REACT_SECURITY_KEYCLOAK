@@ -7,20 +7,28 @@ import {User} from "../../interfaces/User.ts";
 import {UserDetails} from "../../interfaces/UserDetails.ts";
 import UtilitiesVar from "../../interfaces/UtilitiesVar.ts";
 import utilityVarReducer from "../reducers/utilityVarReducer.ts";
+import teamsReducer from "../reducers/teamsReducer.ts";
+import Teams from "../../interfaces/Teams.ts";
 
 
 interface Store1State {
     user: User
-    userDetails: UserDetails
+    userDetails: UserDetails,
 }
 
 interface Store2State {
     utilitiesVar: UtilitiesVar
 }
 
+interface Store3State {
+    teamList: Teams[],
+    single_team: Teams | null
+}
+
 export interface RootState {
     STORE1: Store1State,
-    STORE2: Store2State
+    STORE2: Store2State,
+    STORE3: Store3State
 }
 
 
@@ -33,12 +41,13 @@ const persistConfig = {
             secretKey: "react",
         }),
     ],
-    whitelist: ['STORE1'] // stringhe
+    // whitelist: ['STORE1'] // stringhe
 };
 
 const mergedReducers = combineReducers({
     STORE1: userReducer,
-    STORE2: utilityVarReducer
+    STORE2: utilityVarReducer,
+    STORE3: teamsReducer
 });
 
 

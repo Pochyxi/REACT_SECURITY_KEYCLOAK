@@ -10,6 +10,7 @@ import LinearProgressMUI from "./components/LinearProgressMUI.tsx";
 import {useSelector} from "react-redux";
 import {RootState} from "./redux/store/store.ts";
 import TeamsPage from "./pages/TeamsPage.tsx";
+import Teams_card_page from "./pages/SingleTeamPage.tsx";
 
 
 function App() {
@@ -37,17 +38,21 @@ function App() {
                         }
                     </div>
 
-                    <div className="App-body" style={{marginTop: 100}}>
+                    <div className="App-body" style={{marginTop: 50}}>
                         <Routes>
                             <Route
                                 path="/"
                                 element={<Homepage/>}/>
                             <Route
-                                path="/secured_page"
+                                path="/profile"
                                 element={<ProfilePage/>}/>
                             <Route
-                                path="/teams_page"
+                                path="/teams"
                                 element={<TeamsPage />}/>
+
+                            <Route
+                                path="/teams/team/:teamId"
+                                element={<Teams_card_page />}/>
                         </Routes>
                     </div>
                 </div>

@@ -13,7 +13,7 @@ import CardTheme from "../themes/CardTheme.ts";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import LoadingButton from "@mui/lab/LoadingButton";
 import CircularWhite from "../themes/CircularWhite.ts";
-import {accountPath, baseUrl} from "../api/userApi.ts";
+import {accountPath, baseUrl} from "../api/Api.ts";
 import {DELETE_SET_ModifyUserDetails} from "../redux/actions/userActions.ts";
 import DynamicAlertMUI from "./DynamicAlertMUI.tsx";
 import {useKeycloak} from "@react-keycloak/web";
@@ -37,7 +37,6 @@ const UserDetailsCard = () => {
     const colInfoStyle = {
         color: 'var(--background-primary)',
         fontWeight: 'bold',
-        backgroundColor: 'var(--background-main)',
         marginBottom: '15px',
         padding: '10px',
     }
@@ -71,27 +70,27 @@ const UserDetailsCard = () => {
                                 {
                                     !modifyUser ?
                                         <>
-                                            <Col style={{color: 'var(--highlight)'}}>Nome</Col>
+                                            <Col style={{color: '#A8D8A8'}}>Nome</Col>
                                             <Col style={colInfoStyle}>
                                                 <p className={'h5 m-0'}>{userDetails.firstName}</p>
                                             </Col>
 
-                                            <Col style={{color: 'var(--highlight)'}}>Cognome</Col>
+                                            <Col style={{color: '#A8D8A8'}}>Cognome</Col>
                                             <Col style={colInfoStyle}>
                                                 <p className={'h5 m-0'}>{userDetails.lastName}</p>
                                             </Col>
 
-                                            <Col style={{color: 'var(--highlight)'}}>Email: </Col>
+                                            <Col style={{color: '#A8D8A8'}}>Email: </Col>
                                             <Col style={colInfoStyle}>
                                                 <p className={'h6 m-0'}>{userDetails.accountEmail}</p>
                                             </Col>
 
-                                            <Col style={{color: 'var(--highlight)'}}>Data iscrizione</Col>
+                                            <Col style={{color: '#A8D8A8'}}>Data iscrizione</Col>
                                             <Col style={colInfoStyle}>
                                                 <p className={'h6 m-0'}>{userDetails?.createDt}</p>
                                             </Col>
 
-                                            <Col style={{color: 'var(--highlight)'}}>Telefono</Col>
+                                            <Col style={{color: '#A8D8A8'}}>Telefono</Col>
                                             <Col style={colInfoStyle}>
                                                 <p className={'h6 m-0'}>{userDetails.telephoneNumber}</p>
                                             </Col>
