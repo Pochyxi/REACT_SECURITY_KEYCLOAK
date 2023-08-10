@@ -1,17 +1,122 @@
 body {
     --background-main: #283b48;
-    --background-secondary: #1E1E1E;
-    --background-alert: #B00020;
+    --background-standard-button: #1E1E1E;
+    --background-alert-button: darkred;
+    --background-standard-button-hover: lightgreen;
+    --background-standard-button-text: #fff;
+    --background-standard-button-text-hover: #1E1E1E;
+    --card-background: #004000;
     --text-main: rgba(255, 255, 255, 0.84);
-    --text-secondary: #A1A1A1;
-    --text-alert: #FFFFFF;
-    --background-input: #2D2D2D;
-    --text-input: #FFFFFF;
-    --background-hover: #353535;
-    --background-active: #424242;
-    --highlight: #BB86FC;
 
-    background-color: var(--background-main)!important;
-    color: var(--text-main)!important;
+    background-color: var(--background-main) !important;
+    color: var(--text-main) !important;
+
+    height: 100vh;
+    overflow: auto;
 }
+
+.App {
+    border: 5px solid #fff;
+    border-bottom: none;
+    height: 99vh;
+}
+
+#soccer_field {
+    width: 100%; /* Scegli la dimensione che preferisci */
+    height: 100%;
+    background-color: #fff; /* Scegli il colore che preferisci */
+    position: absolute; /* Posiziona il cerchio al centro del body */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra il cerchio */
+    z-index: -1;
+}
+
+#soccer_field img {
+    width: 100vw;
+    height: 100%;
+}
+
+#circle {
+    width: 400px; /* Scegli la dimensione che preferisci */
+    height: 400px;
+    background-color: #fff; /* Scegli il colore che preferisci */
+    border-radius: 50%; /* Rende il div un cerchio */
+    position: absolute; /* Posiziona il cerchio al centro del body */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra il cerchio */
+    z-index: -1;
+}
+
+#internal_circle {
+    width: 390px; /* Scegli la dimensione che preferisci */
+    height: 390px;
+    background-color: var(--background-main); /* Scegli il colore che preferisci */
+    border-radius: 50%; /* Rende il div un cerchio */
+    position: absolute; /* Posiziona il cerchio al centro del body */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra il cerchio */
+    z-index: -1;
+}
+
+#center_circle {
+    width: 20px; /* Scegli la dimensione che preferisci */
+    height: 20px;
+    background-color: #fff; /* Scegli il colore che preferisci */
+    border-radius: 50%; /* Rende il div un cerchio */
+    position: absolute; /* Posiziona il cerchio al centro del body */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra il cerchio */
+    z-index: -1;
+}
+
+#middle_line {
+    width: 100%; /* Scegli la dimensione che preferisci */
+    height: 5px;
+    background-color: #fff; /* Scegli il colore che preferisci */
+    position: absolute; /* Posiziona il cerchio al centro del body */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra il cerchio */
+    z-index: -1;
+}
+
+@keyframes lampeggio {
+    0% {
+        background-color: white;
+    }
+    50% {
+        background-color: lightgreen;
+    }
+    100% {
+        background-color: white;
+    }
+}
+
+@keyframes lampeggioBorderApp {
+    0% {
+        border: 5px solid white;
+        border-bottom: none;
+    }
+    50% {
+        border: 5px solid lightgreen;
+        border-bottom: none;
+    }
+    100% {
+        border: 5px solid white;
+        border-bottom: none;
+    }
+}
+
+.lampeggiante {
+    animation: lampeggio 0.5s infinite; /* L'animazione ripeterà ogni 0.5 secondi */
+}
+
+.lampeggianteBorderApp {
+    animation: lampeggioBorderApp 0.5s infinite; /* L'animazione ripeterà ogni 0.5 secondi */
+}
+
 

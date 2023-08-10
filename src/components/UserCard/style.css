@@ -1,0 +1,15 @@
+#dvlpz_user_card {
+    background-color: var(--card-background);
+    color: var(--text-main);
+    opacity: .9;
+}
+
+#dvlpz_user_card_button {
+    background-color: var(--background-standard-button);
+}
+
+#dvlpz_user_card_button:hover {
+    background-color: var(--background-standard-button-hover);
+    color: var(--background-standard-button-text-hover);
+}
+

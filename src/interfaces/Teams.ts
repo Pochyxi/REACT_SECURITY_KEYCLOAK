@@ -1,7 +1,7 @@
 import {UserDetails} from "./UserDetails.ts";
 
 export default interface Teams {
-    id: number | null;
+    id: number | "";
     teamName: string | "";
     accountsOwner: UserDetails | null;
 }

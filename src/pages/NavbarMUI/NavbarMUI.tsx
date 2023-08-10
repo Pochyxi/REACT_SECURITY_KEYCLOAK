@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './style.css';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,13 +15,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {useLocation, useNavigate} from "react-router-dom";
-import {AppDispatch, RootState} from "../redux/store/store.ts";
+import {AppDispatch, RootState} from "../../redux/store/store.ts";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useKeycloak} from "@react-keycloak/web";
-import {GET_SET_UserDetails, setUser, setUserDetails} from "../redux/actions/userActions.ts";
-
-// import jwtDecode from 'jwt-decode';
+import {GET_SET_UserDetails, setUser, setUserDetails} from "../../redux/actions/userActions.ts";
 
 interface Props {
     /**
@@ -64,6 +63,21 @@ function NavbarMUI(props: Props) {
             document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         });
 
+        dispatch(setUser({
+            email: "",
+            firstName: "",
+            lastName: "",
+            xsrfToken: ""
+        }))
+
+        dispatch(setUserDetails({
+            accountEmail: "",
+            firstName: "",
+            lastName: "",
+            telephoneNumber: "",
+            createDt: "",
+        }))
+
         keycloak.logout();
     }
 
@@ -76,6 +90,30 @@ function NavbarMUI(props: Props) {
                     dispatch(GET_SET_UserDetails(profile.email, keycloak.token as string))
                 }
             )
+
+
+        }
+
+        if (!keycloak.authenticated) {
+
+            dispatch(setUser({
+                email: "",
+                firstName: "",
+                lastName: "",
+                xsrfToken: ""
+            }))
+            setNavItems(['Home', 'Login'])
+        } else {
+            keycloak.loadUserProfile()
+                .then((profile) => {
+                    dispatch(setUser({
+                        email: profile.email ? profile.email : "",
+                        firstName: profile.firstName ? profile.firstName : "",
+                        lastName: profile.lastName ? profile.lastName : "",
+                        xsrfToken: ""
+                    }));
+                    setNavItems(['Home', 'Teams', 'Profilo', 'Logout'])
+                });
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +121,7 @@ function NavbarMUI(props: Props) {
 
     // Imposta un timeout per verificare la scadenza del token
     useEffect(() => {
-            console.log(keycloak.token as string)
+            if (keycloak.authenticated) console.log(keycloak.token as string)
             const minValidity = 5 * 60; // Secondi
             const refreshInterval = setInterval(() => {
                 if (keycloak.authenticated) {
@@ -112,38 +150,6 @@ function NavbarMUI(props: Props) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [keycloak.authenticated]
     )
-    ; // Dipendenza da keycloak
-
-
-    // Imposta i link del menu in base allo stato di autenticazione
-    // Imposta anche l'oggetto user nello store
-    useEffect(() => {
-
-        if (keycloak.authenticated) {
-
-            keycloak.loadUserProfile()
-                .then((profile) => {
-                    dispatch(setUser({
-                        email: profile.email ? profile.email : "",
-                        firstName: profile.firstName ? profile.firstName : "",
-                        lastName: profile.lastName ? profile.lastName : "",
-                        xsrfToken: ""
-                    }));
-                    setNavItems(['Home', 'Teams', 'Profilo', 'Logout'])
-                });
-        } else {
-            setNavItems(['Home', 'Login'])
-            dispatch(setUser({
-                email: "",
-                firstName: "",
-                lastName: "",
-                xsrfToken: ""
-            }))
-        }
-
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [keycloak.authenticated]);
 
     const customNavigation = (path: string) => {
 
@@ -153,20 +159,6 @@ function NavbarMUI(props: Props) {
                 break;
 
             case 'Logout':
-                dispatch(setUser({
-                    email: "",
-                    firstName: "",
-                    lastName: "",
-                    xsrfToken: ""
-                }))
-
-                dispatch(setUserDetails({
-                    accountEmail: "",
-                    firstName: "",
-                    lastName: "",
-                    telephoneNumber: "",
-                    createDt: "",
-                }))
                 logout_()
                 break;
 
@@ -189,7 +181,7 @@ function NavbarMUI(props: Props) {
     }
 
     const locationConverter = (item: string) => {
-        console.log(item)
+
         if (item === 'Teams' && location.pathname.startsWith('/teams')) {
             return true
         } else if (item === 'Profilo' && location.pathname.startsWith('/profile')) {
@@ -239,7 +231,7 @@ function NavbarMUI(props: Props) {
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <AppBar component="nav">
+            <AppBar id={'dvlpz_app_bar'} component="nav">
                 <Toolbar>
                     <IconButton
                         color="inherit"

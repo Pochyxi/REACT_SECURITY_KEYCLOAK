@@ -1,17 +1,19 @@
 import {Col, Container, Row} from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store/store.ts";
+import {AppDispatch, RootState} from "../../redux/store/store.ts";
 import {useEffect, useState} from "react";
-import {DELETE_SET_TEAMS, GET_SET_SINGLE_TEAM} from "../redux/actions/teamsActions.ts";
+import {DELETE_SET_TEAMS, GET_SET_SINGLE_TEAM} from "../../redux/actions/teamsActions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {useKeycloak} from "@react-keycloak/web";
-import StandardButtonTheme from "../themes/StandardButtonTheme.ts";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import {ThemeProvider} from "@mui/material/styles";
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ModifyTeamForm from "../components/forms/ModifyTeamForm.tsx";
+import ModifyTeamForm from "../../components/FORMS/ModifyTeamForm/ModifyTeamForm.tsx";
+import './style.css'
+import {Card, CardContent, Tooltip} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import AddModeratorIcon from "@mui/icons-material/AddModerator";
 
 
 const SingleTeamPage = () => {
@@ -24,8 +26,7 @@ const SingleTeamPage = () => {
     const [openModifyTeam, setOpenModifyTeam] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!keycloak.authenticated) navigate('/')
-        if (keycloak.authenticated && user.email) {
+        if (user.email) {
             dispatch(GET_SET_SINGLE_TEAM(params.teamId, user.email, keycloak.token as string))
             console.log(singleTeam)
         }
@@ -33,6 +34,8 @@ const SingleTeamPage = () => {
     }, [keycloak.authenticated]);
 
     const DELETE_Team = () => {
+        if (!singleTeam?.id) return
+
         dispatch(DELETE_SET_TEAMS(user.email, singleTeam.id, keycloak.token as string, user.xsrfToken))
         navigate('/teams')
     }
@@ -40,10 +43,27 @@ const SingleTeamPage = () => {
 
     return (
         <Container fluid>
+            <Row className={'justify-content-center'}>
+                <Col xs={8}>
+                    <Card id={'dvlpz-single-team-page-smart-bar'}>
+                        <CardContent>
+                            <Tooltip title="Nuovo TEAM">
+                                <IconButton
+                                    // todo: implementare
+                                    // color={newTeamFormFlag ? 'success' : 'primary'}
+                                    aria-label="add to shopping cart"
+                                    // onClick={() => {setNewTeamFormFlag(!newTeamFormFlag)}}
+                                >
+                                    <AddModeratorIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </CardContent>
+                    </Card>
+                </Col>
+            </Row>
             <Row className={'justify-content-end'}>
                 <Col xs={6} className={'d-flex justify-content-end'}>
-                    <ThemeProvider theme={StandardButtonTheme}>
-                        <Button variant="contained" color={'softBlack'} startIcon={
+                        <Button id={'dvlpz_modify_team_button'} variant="contained" color={'success'} startIcon={
                             openModifyTeam ? <CloseIcon/> :
                                 <SettingsApplicationsIcon/>
                         }
@@ -51,18 +71,15 @@ const SingleTeamPage = () => {
                         >
                             Modifica
                         </Button>
-                    </ThemeProvider>
-                    <ThemeProvider theme={StandardButtonTheme}>
-                        <Button variant="contained" color={'softBlack'} startIcon={<DeleteIcon/>}
+                        <Button id={'dvlpz_delete_team_button'} variant="contained" color={'success'} startIcon={<DeleteIcon/>}
                                 onClick={() => {DELETE_Team()}}
                         >
                             Elimina
                         </Button>
-                    </ThemeProvider>
                 </Col>
             </Row>
             <h1 className={'text-center'}>
-                {!openModifyTeam ? singleTeam?.teamName : <ModifyTeamForm id={singleTeam?.id} teamName={singleTeam?.teamName} setOpenModifyTeam={setOpenModifyTeam}/>}
+                {!openModifyTeam ? singleTeam?.teamName : <ModifyTeamForm id={singleTeam.id} teamName={singleTeam?.teamName} setOpenModifyTeam={setOpenModifyTeam}/>}
             </h1>
             <Row>
                 <Col xs={12} className={'d-flex justify-content-center'}>

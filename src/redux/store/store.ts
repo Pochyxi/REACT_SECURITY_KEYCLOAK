@@ -22,7 +22,7 @@ interface Store2State {
 
 interface Store3State {
     teamList: Teams[],
-    single_team: Teams | null
+    single_team: Teams
 }
 
 export interface RootState {

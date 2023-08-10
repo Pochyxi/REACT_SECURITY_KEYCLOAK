@@ -1,0 +1,8 @@
+#dvlpz_user_card_save_button {
+    background-color: var(--background-standard-button);
+}
+
+#dvlpz_user_card_save_button:hover {
+    background-color: var(--background-standard-button-hover);
+    color: var(--background-standard-button-text-hover);
+}

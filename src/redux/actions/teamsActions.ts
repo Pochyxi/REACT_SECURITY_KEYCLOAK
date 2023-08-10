@@ -24,7 +24,6 @@ export const setSingleTeam = (team: Teams) => {
     }
 }
 
-// todo: implementare
 export const GET_SET_TEAMS = (email: string | undefined, token: string | undefined): AppThunk => {
 
     return async (dispatch) => {
@@ -141,7 +140,7 @@ export const PUT_SET_TEAMS = (token: string | undefined, crsfToken: string | und
     }
 }
 
-export const DELETE_SET_TEAMS = (email: string | undefined, id: string | undefined, token: string | undefined, crsfToken: string | undefined): AppThunk => {
+export const DELETE_SET_TEAMS = (email: string | undefined, id: number | "", token: string | undefined, crsfToken: string | undefined): AppThunk => {
 
     return async (dispatch) => {
         try {

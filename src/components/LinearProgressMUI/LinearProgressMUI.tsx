@@ -4,7 +4,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 export default function LinearProgressMUI() {
     return (
         <Box sx={{ width: '100%' }}>
-            <LinearProgress />
+            <LinearProgress color={'success'} />
         </Box>
     );
 }

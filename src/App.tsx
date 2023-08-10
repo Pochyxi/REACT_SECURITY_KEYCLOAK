@@ -1,16 +1,15 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import ProfilePage from "./pages/ProfilePage.tsx";
-import Homepage from "./pages/Homepage.tsx";
-import {ThemeProvider} from '@mui/material/styles';
+import ProfilePage from "./pages/ProfilePage/ProfilePage.tsx";
+import Homepage from "./pages/HomePage/HomePage.tsx";
 import {ReactKeycloakProvider} from "@react-keycloak/web";
 import keycloak from "./keycloak.ts";
-import NavBarTheme from "./themes/NavBarTheme.ts"
-import NavbarMUI from "./pages/NavbarMUI.tsx";
-import LinearProgressMUI from "./components/LinearProgressMUI.tsx";
+import NavbarMUI from "./pages/NavbarMUI/NavbarMUI.tsx";
 import {useSelector} from "react-redux";
 import {RootState} from "./redux/store/store.ts";
-import TeamsPage from "./pages/TeamsPage.tsx";
-import Teams_card_page from "./pages/SingleTeamPage.tsx";
+import TeamsPage from "./pages/TeamsPage/TeamsPage.tsx";
+import Teams_card_page from "./pages/SingleTeamPage/SingleTeamPage.tsx";
+import {Container} from "react-bootstrap";
+import SoccerBall from "./components/SoccerBall/SoccerBall.tsx";
 
 
 function App() {
@@ -24,21 +23,17 @@ function App() {
             }
         } authClient={keycloak}>
             <BrowserRouter>
+                <div className={fetchingFlag ? 'lampeggiante' : ''} id={'circle'}></div>
+                <div  id={'internal_circle'}></div>
+                <div className={fetchingFlag ? 'lampeggiante' : ''} id={'middle_line'}></div>
+                <div className={fetchingFlag ? 'lampeggiante' : ''} id={'center_circle'}></div>
+                <SoccerBall />
 
-                <div className="App">
+                <div className={fetchingFlag ? "App lampeggianteBorderApp" : 'App'}>
                     <div className="App-header">
-                        <ThemeProvider theme={NavBarTheme}>
                             <NavbarMUI/>
-                        </ThemeProvider>
                     </div>
-
-                    <div className="progress-div" style={{marginTop: 64, visibility: fetchingFlag ? "visible" : "hidden"}}>
-                        {
-                            <LinearProgressMUI />
-                        }
-                    </div>
-
-                    <div className="App-body" style={{marginTop: 50}}>
+                    <Container fluid className="App-body" style={{marginTop: 60}}>
                         <Routes>
                             <Route
                                 path="/"
@@ -54,7 +49,7 @@ function App() {
                                 path="/teams/team/:teamId"
                                 element={<Teams_card_page />}/>
                         </Routes>
-                    </div>
+                    </Container>
                 </div>
             </BrowserRouter>
         </ReactKeycloakProvider>

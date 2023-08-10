@@ -1,0 +1,23 @@
+#dvlpz_modify_team_button {
+    background-color: var(--background-standard-button);
+}
+
+#dvlpz_modify_team_button:hover {
+    background-color: var(--background-standard-button-hover);
+    color: var(--background-standard-button-text-hover);
+}
+
+#dvlpz_delete_team_button {
+    background-color: var(--background-standard-button);
+}
+
+#dvlpz_delete_team_button:hover {
+    background-color: var(--background-alert-button);
+}
+
+#dvlpz-single-team-page-smart-bar{
+    background-color: var(--background-standard-button);
+    color: var(--text-main);
+    margin-bottom: 10px;
+    opacity: .9;
+}

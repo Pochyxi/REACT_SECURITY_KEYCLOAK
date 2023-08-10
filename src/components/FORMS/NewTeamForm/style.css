@@ -1,0 +1,13 @@
+#dvlpz_new_team_form_card {
+    background-color: var(--card-background);
+    color: var(--text-main);
+}
+
+#dvlpz_new_team_form_button {
+    background-color: var(--background-standard-button);
+}
+
+#dvlpz_new_team_form_button:hover {
+    background-color: var(--background-standard-button-hover);
+    color: var(--background-standard-button-text-hover);
+}
