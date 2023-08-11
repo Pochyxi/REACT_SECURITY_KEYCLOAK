@@ -39,7 +39,7 @@ const SoccerBall = () => {
              style={{
                  position: 'absolute', left: `${left}px`, top: `${top}px`, width: '50px', height: '50px'
         }}>
-            <img src={`/soccer-ball.svg`} alt="Soccer Ball" />
+            <img src={`/soccer-ball-v2.svg`} alt="Soccer Ball" />
         </div>
     );
 };

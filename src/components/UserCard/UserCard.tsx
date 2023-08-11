@@ -3,33 +3,29 @@ import {Card, CardContent} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store/store.ts";
 import {Col, Row} from "react-bootstrap";
-import Button from "@mui/material/Button";
-import {useEffect, useState} from "react";
+import {FC, useState} from "react";
 import ModifyUserForm from "../FORMS/ModifyUserForm/ModifyUserForm.tsx";
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import CloseIcon from '@mui/icons-material/Close';
+
 import DynamicAlertMUI from "../DynamicAlertMUI/DynamicAlertMUI.tsx";
-import {GET_SET_UserDetails, PUT_SET_ModifyUserDetails} from "../../redux/actions/userActions.ts";
+import {PUT_SET_ModifyUserDetails} from "../../redux/actions/userActions.ts";
 import {useKeycloak} from "@react-keycloak/web";
 import {UserDetails} from "../../interfaces/UserDetails.ts";
 import {accountPath, baseUrl} from "../../api/Api.ts";
 
+interface UserCardProps {
+    modifyUser: boolean;
+    setModifyUser: (value: boolean) => void;
+}
 
-const UserCard = () => {
+const UserCard: FC<UserCardProps> = ({modifyUser, setModifyUser}) => {
     const {keycloak} = useKeycloak();
     const user = useSelector((state: RootState) => state.STORE1.user);
     const dispatch: AppDispatch = useDispatch();
 
     const userDetails = useSelector((state: RootState) => state.STORE1.userDetails);
-    const [modifyUser, setModifyUser] = useState<boolean>(false);
+
     const [open, setOpen] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
-
-    useEffect(() => {
-        if (keycloak.authenticated) dispatch(GET_SET_UserDetails(user.email, keycloak.token as string))
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [keycloak.authenticated]);
 
     const PUT_USER = (values: UserDetails) => {
 
@@ -48,20 +44,6 @@ const UserCard = () => {
         <Card id={'dvlpz_user_card'} sx={{width: '100%'}}>
             <DynamicAlertMUI open={open} handleClose={handleClose} message={message}/>
             <CardContent>
-                <Row>
-                    <Col className={'d-flex justify-content-start'}>
-                        <Button
-                            id={'dvlpz_user_card_button'}
-                            variant="contained" color={'success'} startIcon={
-                            modifyUser ? <CloseIcon/> :
-                                <ManageAccountsIcon/>
-                        }
-                                onClick={() => setModifyUser(!modifyUser)}
-                        >
-                            {modifyUser ? 'Annulla' : 'Modifica'}
-                        </Button>
-                    </Col>
-                </Row>
                 <Row className={'flex-column my-2'}>
                     {
                         !modifyUser ?

@@ -42,6 +42,7 @@ const persistConfig = {
         }),
     ],
     // whitelist: ['STORE1'] // stringhe
+    blacklist: ["STORE1", "STORE2", "STORE3"],
 };
 
 const mergedReducers = combineReducers({

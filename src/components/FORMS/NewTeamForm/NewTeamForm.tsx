@@ -38,9 +38,6 @@ const NewTeamForm: FC<NewTeamFormProps> = (props: NewTeamFormProps) => {
     return (
         <Card id={'dvlpz_new_team_form_card'} sx={{width: '100%'}}>
             <CardContent>
-                <Row className={'flex-column my-2'}>
-                    <h2 className={'text-center'} style={{color: '#A8D8A8'}}>Crea un nuovo TEAM</h2>
-                </Row>
                 <Formik
                     initialValues={{
                         "teamName": "",

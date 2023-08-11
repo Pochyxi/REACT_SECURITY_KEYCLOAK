@@ -33,7 +33,7 @@ function App() {
                     <div className="App-header">
                             <NavbarMUI/>
                     </div>
-                    <Container fluid className="App-body" style={{marginTop: 60}}>
+                    <Container fluid className="App-body" style={{marginTop: 50}}>
                         <Routes>
                             <Route
                                 path="/"

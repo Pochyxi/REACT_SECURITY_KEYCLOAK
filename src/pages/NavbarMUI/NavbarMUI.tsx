@@ -81,39 +81,25 @@ function NavbarMUI(props: Props) {
         keycloak.logout();
     }
 
+
     useEffect(() => {
         console.log("authenticato: " + keycloak.authenticated)
 
         // Eseguiamo la nostra funzione per fare il fetch dei dati
-        if (keycloak.authenticated && location.pathname != '/profile') {
+        if (keycloak.authenticated) {
             keycloak.loadUserProfile().then((profile) => {
-                    dispatch(GET_SET_UserDetails(profile.email, keycloak.token as string))
-                }
-            )
-
-
-        }
-
-        if (!keycloak.authenticated) {
-
-            dispatch(setUser({
-                email: "",
-                firstName: "",
-                lastName: "",
-                xsrfToken: ""
-            }))
-            setNavItems(['Home', 'Login'])
-        } else {
-            keycloak.loadUserProfile()
-                .then((profile) => {
                     dispatch(setUser({
                         email: profile.email ? profile.email : "",
                         firstName: profile.firstName ? profile.firstName : "",
                         lastName: profile.lastName ? profile.lastName : "",
                         xsrfToken: ""
                     }));
+                    dispatch(GET_SET_UserDetails(profile.email, keycloak.token as string))
                     setNavItems(['Home', 'Teams', 'Profilo', 'Logout'])
-                });
+                }
+            )
+        } else {
+            setNavItems(['Home', 'Login'])
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,6 +108,7 @@ function NavbarMUI(props: Props) {
     // Imposta un timeout per verificare la scadenza del token
     useEffect(() => {
             if (keycloak.authenticated) console.log(keycloak.token as string)
+
             const minValidity = 5 * 60; // Secondi
             const refreshInterval = setInterval(() => {
                 if (keycloak.authenticated) {
@@ -143,7 +130,7 @@ function NavbarMUI(props: Props) {
                         });
                 }
 
-            }, 60000 * 5); // Controlla ogni 5 minuti
+            }, 60000); // Controlla ogni minuto
 
             return () => clearInterval(refreshInterval); // Pulisce l'intervallo quando il componente viene smontato
 

@@ -1,7 +1,11 @@
-#dvlpz-team-page-smart-bar {
+#dvlpz-smart-bar{
     background-color: var(--background-main);
     color: var(--text-main);
     margin-bottom: 10px;
     opacity: .9;
     box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+}
+
+.MuiCardContent-root .css-1i9wt8r-MuiCardContent-root{
+    padding: 0!important;
 }

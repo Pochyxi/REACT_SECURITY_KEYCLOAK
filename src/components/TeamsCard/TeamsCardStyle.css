@@ -1,0 +1,32 @@
+#dvlpz_teams_card {
+    background-color: rgb(182, 182, 182);
+    color: #fff;
+    text-shadow: black 2px 2px 2px;
+    cursor: pointer;
+    background-image: url('/team.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100px;
+}
+
+#dvlpz_teams_card:hover {
+    background-color: var(--text-main);
+    color: dodgerblue;
+    text-shadow: #1E1E1E 1px 1px 1px;
+}
+
+#dvlpz_team_card_floor {
+    background-color: var(--background-main);
+    color: var(--text-main);
+    opacity: .9;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+    margin : 10px 0;
+}
+
+#dvlpz_new_team_card_floor {
+    background-color: var(--background-main);
+    color: var(--text-main);
+    opacity: .9;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+    margin : 10px 0;
+}

@@ -1,4 +1,4 @@
-import './style.css'
+import './TeamsCardStyle.css'
 import {Card, CardContent} from "@mui/material";
 import {Row} from "react-bootstrap";
 import {FC} from "react";

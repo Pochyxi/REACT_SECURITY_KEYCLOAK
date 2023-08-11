@@ -25,6 +25,8 @@ export const setUserDetails = (userDetails: UserDetails | null) => ({
 export const GET_SET_UserDetails = (email: string | undefined, token: string | undefined): AppThunk => {
 
     return async (dispatch, getState) => {
+        if (email === '' || token === '') return
+
         let crsfToken = ''
 
         try {
@@ -39,6 +41,8 @@ export const GET_SET_UserDetails = (email: string | undefined, token: string | u
                 }, withCredentials: true
 
             })
+
+            console.log(response.data)
 
             if (response.status === 200 && response.data !== 'Nessun account trovato con questa email') {
 

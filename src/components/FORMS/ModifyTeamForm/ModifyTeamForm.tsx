@@ -40,9 +40,6 @@ const ModifyTeamForm: FC<ModifyTeamFormProps> = (props) => {
     return (
         <Card id={'dvlpz_modify_team_form_card'} sx={{width: '100%'}}>
             <CardContent>
-                <Row className={'flex-column my-2'}>
-                    <h2 className={'text-center'} style={{color: '#A8D8A8'}}>Modifica TEAM</h2>
-                </Row>
                 <Formik
                     initialValues={{
                         "teamName": props.teamName,
