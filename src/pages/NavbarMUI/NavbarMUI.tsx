@@ -44,24 +44,6 @@ function NavbarMUI(props: Props) {
 
     const logout_ = () => {
         console.log("logout_")
-        const sessionStorageKeys = ['http://127.0.0.1:5173/', 'http://localhost8180/'];
-        const localStorageKeys = ['http://127.0.0.1:5173/', 'http://localhost8180/'];
-        const cookieKeys = ['http://127.0.0.1:5173/', 'http://localhost8180/'];
-
-        // Per cancellare dati specifici in sessionStorage
-        sessionStorageKeys.forEach(key => {
-            sessionStorage.removeItem(key);
-        });
-
-        // Per cancellare dati specifici in localStorage
-        localStorageKeys.forEach(key => {
-            localStorage.removeItem(key);
-        });
-
-        // Per cancellare cookie specifici
-        cookieKeys.forEach(key => {
-            document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        });
 
         dispatch(setUser({
             email: "",
@@ -87,19 +69,27 @@ function NavbarMUI(props: Props) {
 
         // Eseguiamo la nostra funzione per fare il fetch dei dati
         if (keycloak.authenticated) {
-            keycloak.loadUserProfile().then((profile) => {
-                    dispatch(setUser({
-                        email: profile.email ? profile.email : "",
-                        firstName: profile.firstName ? profile.firstName : "",
-                        lastName: profile.lastName ? profile.lastName : "",
-                        xsrfToken: ""
-                    }));
-                    dispatch(GET_SET_UserDetails(profile.email, keycloak.token as string))
-                    setNavItems(['Home', 'Teams', 'Profilo', 'Logout'])
-                }
-            )
+            setNavItems(['Home', 'Teams', 'Profilo', 'Logout'])
+            if (!user.email) {
+                keycloak.loadUserProfile().then((profile) => {
+                        dispatch(setUser({
+                            email: profile.email ? profile.email : "",
+                            firstName: profile.firstName ? profile.firstName : "",
+                            lastName: profile.lastName ? profile.lastName : "",
+                            xsrfToken: ""
+                        }));
+                        dispatch(GET_SET_UserDetails(profile.email, keycloak.token as string))
+                    }
+                )
+            }
         } else {
             setNavItems(['Home', 'Login'])
+            dispatch(setUser({
+                email: "",
+                firstName: "",
+                lastName: "",
+                xsrfToken: ""
+            }))
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,36 +97,35 @@ function NavbarMUI(props: Props) {
 
     // Imposta un timeout per verificare la scadenza del token
     useEffect(() => {
-            if (keycloak.authenticated) console.log(keycloak.token as string)
+        if (keycloak.authenticated) console.log(keycloak.token as string)
 
-            const minValidity = 5 * 60; // Secondi
-            const refreshInterval = setInterval(() => {
-                if (keycloak.authenticated) {
-                    console.log("Checking token validity")
+        const minValidity = 5 * 60; // Secondi
+        const refreshInterval = setInterval(() => {
+            if (keycloak.authenticated) {
+                console.log("Checking token validity")
 
-                    keycloak.updateToken(minValidity)
-                        .then(refreshed => {
-                            if (refreshed) {
-                                console.log("Token refreshed")
-                            } else {
-                                // Il token era ancora valido, non era necessario rinnovare
-                                console.log("Token not refreshed, still valid")
-                            }
-                        })
-                        .catch(() => {
-                            // Errore durante il tentativo di rinnovo del token, potrebbe essere necessario gestire il logout qui
-                            keycloak.logout();
-                            console.log("Failed to refresh the token, or the session has expired")
-                        });
-                }
+                keycloak.updateToken(minValidity)
+                    .then(refreshed => {
+                        if (refreshed) {
+                            console.log("Token refreshed")
+                        } else {
+                            // Il token era ancora valido, non era necessario rinnovare
+                            console.log("Token not refreshed, still valid")
+                        }
+                    })
+                    .catch(() => {
+                        // Errore durante il tentativo di rinnovo del token, potrebbe essere necessario gestire il logout qui
+                        keycloak.logout();
+                        console.log("Failed to refresh the token, or the session has expired")
+                    });
+            }
 
-            }, 60000); // Controlla ogni minuto
+        }, 60000); // Controlla ogni minuto
 
-            return () => clearInterval(refreshInterval); // Pulisce l'intervallo quando il componente viene smontato
+        return () => clearInterval(refreshInterval); // Pulisce l'intervallo quando il componente viene smontato
 
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [keycloak.authenticated]
-    )
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [keycloak.authenticated])
 
     const customNavigation = (path: string) => {
 

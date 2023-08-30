@@ -1,9 +1,10 @@
 import UtilitiesVar from "../../interfaces/UtilitiesVar.ts";
-import {SET_FETCHING_FLAG} from "../actions/utilitiesVarActions.ts";
+import {SET_FETCHING_FLAG, SET_SMART_BAR_FLAG} from "../actions/utilitiesVarActions.ts";
 
 
 type ActionType =
     | { type: 'SET_FETCHING_FLAG', payload: UtilitiesVar }
+    | { type: 'SET_SMART_BAR_FLAG', payload: UtilitiesVar }
 
 export interface UtilitiesVarState {
     utilitiesVar: UtilitiesVar
@@ -11,7 +12,8 @@ export interface UtilitiesVarState {
 
 const initialState = {
     utilitiesVar: {
-        fetchingFlag: false
+        fetchingFlag: false,
+        smartBarFlag: false
     }
 }
 
@@ -24,6 +26,14 @@ const utilityVarReducer = (state: UtilitiesVarState = initialState, action: Acti
                     fetchingFlag: action.payload
                 },
             };
+
+            case SET_SMART_BAR_FLAG:
+                return {
+                    ...state,
+                    utilitiesVar: {
+                        smartBarFlag: action.payload
+                    },
+                };
         default:
             return state;
     }

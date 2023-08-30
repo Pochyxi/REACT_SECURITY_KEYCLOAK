@@ -9,6 +9,7 @@ import UtilitiesVar from "../../interfaces/UtilitiesVar.ts";
 import utilityVarReducer from "../reducers/utilityVarReducer.ts";
 import teamsReducer from "../reducers/teamsReducer.ts";
 import Teams from "../../interfaces/Teams.ts";
+import CardPlayer from "../../interfaces/CardPlayer.ts";
 
 
 interface Store1State {
@@ -23,6 +24,7 @@ interface Store2State {
 interface Store3State {
     teamList: Teams[],
     single_team: Teams
+    cardList: CardPlayer[]
 }
 
 export interface RootState {
@@ -42,7 +44,7 @@ const persistConfig = {
         }),
     ],
     // whitelist: ['STORE1'] // stringhe
-    blacklist: ["STORE1", "STORE2", "STORE3"],
+    blacklist: ["STORE2", "STORE3"],
 };
 
 const mergedReducers = combineReducers({

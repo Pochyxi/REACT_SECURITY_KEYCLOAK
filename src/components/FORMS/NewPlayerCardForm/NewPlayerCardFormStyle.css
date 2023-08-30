@@ -1,0 +1,13 @@
+#dvlpz_new_player_card_form_card {
+    background-color: var(--background-standard-button);
+    color: var(--text-main);
+}
+
+#dvlpz_new_player_card_form_button {
+    background-color: var(--background-standard-button);
+}
+
+#dvlpz_new_player_card_form_button:hover {
+    background-color: var(--background-standard-button-hover);
+    color: var(--background-standard-button-text-hover);
+}

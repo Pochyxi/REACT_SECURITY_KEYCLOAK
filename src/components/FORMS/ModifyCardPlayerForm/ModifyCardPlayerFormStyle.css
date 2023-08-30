@@ -1,0 +1,14 @@
+#dvlpz_modify_player_card {
+    background-color: var(--background-standard-button);
+    color: var(--text-main);
+    opacity: .9;
+}
+
+#dvlpz_modify_player_card_button {
+    background-color: var(--background-standard-button);
+}
+
+#dvlpz_modify_player_card_button:hover {
+    background-color: var(--background-standard-button-hover);
+    color: var(--background-standard-button-text-hover);
+}

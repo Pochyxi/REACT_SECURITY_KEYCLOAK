@@ -6,13 +6,12 @@ import {FC} from "react";
 import StyleIcon from '@mui/icons-material/Style';
 import AddModeratorIcon from '@mui/icons-material/AddModerator';
 import './SmartBarStyle.css'
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../redux/store/store.ts";
 import SettingsIcon from '@mui/icons-material/Settings';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import GroupsIcon from '@mui/icons-material/Groups';
-import {useNavigate} from "react-router-dom";
-
+import {setSmartBarFlag} from "../../redux/actions/utilitiesVarActions.ts";
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 interface SmartBarProps {
     modifyUser?: boolean,
@@ -24,12 +23,17 @@ interface SmartBarProps {
     openModifyTeam?: boolean,
     setOpenModifyTeam?: (value: boolean) => void,
     DELETE_Team?: () => void,
+    openCardPlayerList?: boolean,
+    setOpenCardPlayerList?: (value: boolean) => void,
+    newCardPlayerFormFlag?: boolean,
+    setNewCardPlayerFormFlag?: (value: boolean) => void,
 }
 
 
 const SmartBar: FC<SmartBarProps> = (props: SmartBarProps) => {
-    const singleTeam = useSelector((state: RootState) => state.STORE3.single_team);
-    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const smartBardFlag = useSelector((state: RootState) => state.STORE2.utilitiesVar.smartBarFlag);
 
     const {modifyUser, setModifyUser} = props;
 
@@ -98,26 +102,13 @@ const SmartBar: FC<SmartBarProps> = (props: SmartBarProps) => {
                     </Col>
                 </>
             )
-        } else if(
-                openModifyTeam != undefined &&
+        } else if (
+            openModifyTeam != undefined &&
             setOpenModifyTeam != undefined &&
             DELETE_Team != undefined
-        ){
+        ) {
             return (
                 <>
-                    <Col className={'d-flex justify-content-center'}>
-                        <Tooltip title="Modifica TEAM">
-                            <IconButton
-                                color={'inherit'}
-                                aria-label="Ritorna ai TEAMS"
-                                onClick={() => {
-                                    navigate('/teams')
-                                }}
-                            >
-                                <GroupsIcon/>
-                            </IconButton>
-                        </Tooltip>
-                    </Col>
                     <Col className={'d-flex justify-content-center'}>
                         <Tooltip title="Modifica TEAM">
                             <IconButton
@@ -144,25 +135,43 @@ const SmartBar: FC<SmartBarProps> = (props: SmartBarProps) => {
                             </IconButton>
                         </Tooltip>
                     </Col>
-                    <Row> <h3 className={'text-center'}>{singleTeam?.teamName}</h3> </Row>
                 </>
             )
         }
     }
 
     return (
-        <Row className={'justify-content-center'}>
-            <Col xs={8}>
-                <Card id={'dvlpz-smart-bar'}>
-                    <Container fluid>
-                        <Row className={'justify-content-center'}>
-                            {iconDispatcher()}
-                        </Row>
-                    </Container>
-                </Card>
-            </Col>
-        </Row>
-    );
-};
+        <>
+            {
+                smartBardFlag && (
+                    <Row className={'justify-content-center'}>
+                        <Col xs={12}>
+                            <Card id={'dvlpz-smart-bar'}>
+                                <Container fluid>
+                                    <Row className={'justify-content-center'}>
+                                        {iconDispatcher()}
+                                        <Col className={'d-flex justify-content-center'}>
+                                            <Tooltip title="Chiudi">
+                                                <IconButton
+                                                    color={'error'}
+                                                    aria-label="Chiudi"
+                                                    onClick={() => {
+                                                        dispatch(setSmartBarFlag(false))
+                                                    }}
+                                                >
+                                                    <ExitToAppIcon/>
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Card>
+                        </Col>
+                    </Row>
+                )
+            }
+        </>
+    )
+}
 
 export default SmartBar;

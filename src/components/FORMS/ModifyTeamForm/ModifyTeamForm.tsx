@@ -29,7 +29,7 @@ const ModifyTeamForm: FC<ModifyTeamFormProps> = (props) => {
 
     const PUT_Team = (values: ModifyTeamFormValues) => {
         const data: TeamModify = {
-            "teamsId": props.id,
+            "teamsId": props?.id,
             "teamName": values.teamName,
             "ownerEmail": user.email
         }

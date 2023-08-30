@@ -1,0 +1,17 @@
+#dvlpz_player_card {
+    background-color: rgb(182, 182, 182);
+    color: #283b48;
+    cursor: pointer;
+    /*background-image: url('/team.svg');*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: center;*/
+    /*background-size: 100px;*/
+}
+
+#dvlpz_player_card:hover {
+    background-color: dodgerblue;
+}
+
+#dvlpz_player_card_list_floor {
+
+}

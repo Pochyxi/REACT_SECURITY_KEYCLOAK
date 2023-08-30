@@ -1,0 +1,8 @@
+#dvlpz_trigger_smart_bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    zoom: 2;
+    z-index: 999999;
+}

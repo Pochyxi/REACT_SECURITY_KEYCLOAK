@@ -13,3 +13,19 @@
     box-shadow: 0 5px 10px rgba(0,0,0,0.75);
     margin : 10px 0;
 }
+
+#dvlpz_player_card_list_floor {
+    background-color: var(--background-main);
+    color: var(--text-main);
+    opacity: .9;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+    margin : 10px 0;
+}
+
+#dvlpz_new_card_player_floor{
+    background-color: var(--background-main);
+    color: var(--text-main);
+    opacity: .9;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+    margin : 10px 0;
+}

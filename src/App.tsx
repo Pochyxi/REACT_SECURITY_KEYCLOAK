@@ -10,10 +10,12 @@ import TeamsPage from "./pages/TeamsPage/TeamsPage.tsx";
 import Teams_card_page from "./pages/SingleTeamPage/SingleTeamPage.tsx";
 import {Container} from "react-bootstrap";
 import SoccerBall from "./components/SoccerBall/SoccerBall.tsx";
+import TriggerSmartBar from "./components/TriggerSmartbar/TriggerSmartBar.tsx";
 
 
 function App() {
     const fetchingFlag = useSelector((state: RootState) => state.STORE2.utilitiesVar.fetchingFlag);
+    const smartBarFlag = useSelector((state: RootState) => state.STORE2.utilitiesVar.smartBarFlag);
 
 
     return (
@@ -30,10 +32,13 @@ function App() {
                 <SoccerBall />
 
                 <div className={fetchingFlag ? "App lampeggianteBorderApp" : 'App'}>
+                    {
+                        !smartBarFlag && <TriggerSmartBar />
+                    }
                     <div className="App-header">
                             <NavbarMUI/>
                     </div>
-                    <Container fluid className="App-body" style={{marginTop: 50}}>
+                    <Container fluid className="App-body" style={{marginTop: 60}}>
                         <Routes>
                             <Route
                                 path="/"

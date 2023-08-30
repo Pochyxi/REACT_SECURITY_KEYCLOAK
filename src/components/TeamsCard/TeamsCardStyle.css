@@ -10,9 +10,7 @@
 }
 
 #dvlpz_teams_card:hover {
-    background-color: var(--text-main);
-    color: dodgerblue;
-    text-shadow: #1E1E1E 1px 1px 1px;
+    background-color: dodgerblue;
 }
 
 #dvlpz_team_card_floor {
